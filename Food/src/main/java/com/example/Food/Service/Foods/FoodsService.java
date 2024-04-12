@@ -72,6 +72,7 @@ public class FoodsService implements ImplFoodsService{
     public ResponseEntity<?> createFoodWithPropertiesDetails(FoodPropertyDetailsRequest foodPropertyDetailsRequest) {
         Optional<Foods> foodOpt = foodsRepository.findById(foodPropertyDetailsRequest.getFoodID());
         int propertyDetailSize = foodPropertyDetailsRequest.getPropertyDetailID().size();
+        String foodPropertyName= GetName(foodPropertyDetailsRequest.getFoodID(), foodPropertyDetailsRequest.getPropertyDetailID());
         List<Integer> propertyList = propertyDetailsRepository.findPropertyDetailsByFoodIdAndPropertyDetailIds(foodPropertyDetailsRequest.getFoodID(), foodPropertyDetailsRequest.getPropertyDetailID());
         List<Integer> propertyDetailIdsNotFound = new ArrayList<>();
         List<FoodDetailsPropertyDetails> foodDetailsPropertyDetailsList = new ArrayList<>();
@@ -81,6 +82,7 @@ public class FoodsService implements ImplFoodsService{
         foodDetail = new FoodDetails();
         foodDetail.setPrice(foodPropertyDetailsRequest.getPrice());
         foodDetail.setQuantity(foodPropertyDetailsRequest.getQuantity());
+        //foodDetail.setFoodDetailName(foodPropertyName);
         if(foodOpt.isPresent()){
             if(num.size()==1&& foodDetailIDs.size()==foodPropertyDetailsRequest.getPropertyDetailID().size()){
                 return new ResponseEntity<>("already exist",HttpStatus.NOT_FOUND);
@@ -169,16 +171,30 @@ public class FoodsService implements ImplFoodsService{
     public List<AllFoodDTO> getAllFoods() {
         List<Foods> foods = foodsRepository.findAll();
         List<AllFoodDTO> allFoodDTOs = new ArrayList<>();
-
         for (Foods food : foods) {
-            List<FoodDetailDTO> foodDetailDTOs = food.getFoodDetailsPropertyDetails().stream()
-                    .map(fpdd -> new FoodDetailDTO(fpdd.getFoodDetail().getFoodDetailID(), fpdd.getFoodDetail().getPrice(), fpdd.getFoodDetail().getQuantity()))
-                    .collect(Collectors.toList());
-
+            Set<FoodDetailDTO> foodDetailDTOsSet = food.getFoodDetailsPropertyDetails().stream()
+                    .map(fpdd -> new FoodDetailDTO(fpdd.getFoodDetail().getFoodDetailID(), fpdd.getFoodDetail().getPrice(), fpdd.getFoodDetail().getQuantity(),fpdd.getFoodDetail().getFoodDetailName()))
+                    .collect(Collectors.toSet());
+            List<FoodDetailDTO> foodDetailDTOs = new ArrayList<>(foodDetailDTOsSet);
             AllFoodDTO allFoodDTO = new AllFoodDTO(food.getFoodID(), food.getFoodName(), foodDetailDTOs);
             allFoodDTOs.add(allFoodDTO);
         }
         return allFoodDTOs;
     }
 
+    public String GetName(int foodID, List<Integer> propertyDetailIDs) {
+        Optional<Foods> food = foodsRepository.findById(foodID);
+        StringBuilder foodDetailsName = new StringBuilder();
+        String foodName = null;
+        if (food.isPresent()) {
+            foodName = food.get().getFoodName();
+        }
+        for (Integer propertyDetailID : propertyDetailIDs) {
+            Optional<PropertyDetails> propertyDetail = propertyDetailsRepository.findById(propertyDetailID);
+            propertyDetail.ifPresent(propertyDetails -> foodDetailsName
+                    .append(", ")
+                    .append(propertyDetails.getPropertyDetailName()));
+        }
+        return foodName + foodDetailsName.toString();
+    }
 }

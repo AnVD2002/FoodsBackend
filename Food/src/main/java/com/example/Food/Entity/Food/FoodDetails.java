@@ -21,10 +21,13 @@ public class FoodDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_detail_id")
     private int foodDetailID;
+    @Column(name = "food_detail_name")
+    private String foodDetailName;
     @Column(name = "quantity")
     private int quantity;
     @Column(name = "price")
     private double price;
+
 
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail")
