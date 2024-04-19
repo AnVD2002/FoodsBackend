@@ -24,6 +24,8 @@ public class Foods {
     private String foodName;
     @Column(name = "image")
     private String image;
+    @Column(name = "description")
+    private String description;
     @Column(name = "food_category_id",insertable = false, updatable = false)
     private int foodCategoryID;
 

@@ -57,11 +57,15 @@ public class RegisterService implements ImplRegisterService {
         User user = new User();
         if(userCheck.isPresent()){
             if(userCheck.get().isConfirmed()){
+                userCheck.get().setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+                userCheck.get().setEmail(registerRequest.getEmail());
+                userRepository.save(userCheck.get());
                 return RegisterResponse.builder().message("Đã tồn tại tài khoản").build();
             }
             sendConfirmationEmail(newOTP, registerRequest.getEmail());
             return RegisterResponse.builder()
                     .username(userCheck.get().getUserName())
+                    .email(registerRequest.getEmail())
                     .code(newOTP)
                     .message("Còn 1 bước nữa để thành công")
                     .build();
@@ -70,11 +74,12 @@ public class RegisterService implements ImplRegisterService {
         user.setConfirmed(false);
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setNumberPhone(registerRequest.getSdt());
+        user.setUserName(registerRequest.getUsername());
         userRepository.save(user);
         sendConfirmationEmail(newOTP, registerRequest.getEmail());
         return RegisterResponse.builder()
                 .username(registerRequest.getUsername())
+                .email(registerRequest.getEmail())
                 .code(newOTP)
                 .message("Còn 1 bước nữa để thành công")
                 .build();

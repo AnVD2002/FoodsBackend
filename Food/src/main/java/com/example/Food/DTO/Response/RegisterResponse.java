@@ -12,8 +12,6 @@ public class RegisterResponse {
 
     private String email;
 
-    private String phoneNumber;
-
     private boolean status;
 
     private String code;

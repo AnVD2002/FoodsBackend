@@ -20,6 +20,8 @@ public class FoodCategories {
     private int foodCategoryID;
     @Column(name = "food_category_name")
     private String foodCategoryName;
+    @Column(name = "image")
+    private String image;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodCategory")
     @JsonManagedReference("foodCategory-foods")

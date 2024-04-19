@@ -37,8 +37,4 @@ public class AccountController {
         return ResponseEntity.ok(loginService.Login(request));
     }
 
-
-
-
-
 }

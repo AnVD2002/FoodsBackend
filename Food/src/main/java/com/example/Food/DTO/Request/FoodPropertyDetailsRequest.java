@@ -13,6 +13,5 @@ public class FoodPropertyDetailsRequest {
     private int foodID;
     private int quantity;
     private double price;
-    private String image;
     List<Integer> propertyDetailID;
 }

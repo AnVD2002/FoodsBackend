@@ -30,8 +30,6 @@ public class User {
     private LocalDate updateDate;
     @Column(name = "password")
     private String password;
-    @Column(name = "number_phone")
-    private String numberPhone;
     @Column(name = "decentralization_id",insertable = false,updatable = false)
     private int decentralizationID;
     @Column(name = "updatePasswordToken")
@@ -46,7 +44,6 @@ public class User {
     private Decentralization decentralization;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-
     @JsonManagedReference("user-orders")
     private List<Orders> orders;
 }

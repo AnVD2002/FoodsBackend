@@ -10,7 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AllFoodDTO {
-    private int foodId;
+    private int foodID;
     private String foodName;
+    private String description;
+    private String image;
+    private int foodCategoryID;
     private List<FoodDetailDTO> foodDetails;
 }

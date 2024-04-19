@@ -24,16 +24,29 @@ public class FoodController {
     public ResponseEntity<?> CreateFoodPropertyDetails(@RequestBody FoodPropertyDetailsRequest request){
         return ResponseEntity.ok(foodsService.createFoodWithPropertiesDetails(request));
     }
+    @CrossOrigin
     @DeleteMapping(path = "deleteFood", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> DeleteFood(@RequestParam int foodID){
         return ResponseEntity.ok(foodsService.deleteFood(foodID));
     }
+    @CrossOrigin
     @PutMapping(path = "updateFood", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateFood(@RequestParam FoodUpdateRequest foodUpdateRequest){
         return ResponseEntity.ok(foodUpdateRequest);
     }
+    @CrossOrigin
     @GetMapping(path = "allFood")
     public ResponseEntity<?> allFood(){
         return ResponseEntity.ok(foodsService.getAllFoods());
+    }
+    @CrossOrigin
+    @GetMapping(path = "allFoodCategories")
+    public ResponseEntity<?> allFoodCategories(){
+        return ResponseEntity.ok(foodsService.getAllFoodCategories());
+    }
+    @CrossOrigin
+    @GetMapping(path = "allPropertyDetail")
+    public ResponseEntity<?> allPropertyDetail(){
+        return ResponseEntity.ok(foodsService.allPropertyDetails());
     }
 }
