@@ -1,10 +1,12 @@
 package com.example.Food.Service.Foods;
 
+import com.example.Food.DTO.Request.FoodDetailRequest;
 import com.example.Food.DTO.Request.FoodPropertyDetailsRequest;
 import com.example.Food.DTO.Request.FoodRequest;
 import com.example.Food.DTO.Request.FoodUpdateRequest;
 import com.example.Food.DTO.Response.AllFoodDTO;
 import com.example.Food.Entity.Food.FoodCategories;
+import com.example.Food.Entity.Food.FoodDetails;
 import com.example.Food.Entity.Food.PropertyDetails;
 import org.springframework.http.ResponseEntity;
 
@@ -18,4 +20,6 @@ public interface ImplFoodsService {
     public List<AllFoodDTO> getAllFoods();
     public List<FoodCategories> getAllFoodCategories();
     public List<PropertyDetails> allPropertyDetails();
+    public List<PropertyDetails> getPropertyDetailByFoodID(int foodID);
+    public ResponseEntity<?> getFoodDetailB(FoodDetailRequest foodDetailRequest);
 }

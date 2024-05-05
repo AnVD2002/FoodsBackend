@@ -24,15 +24,20 @@ import java.util.List;
 
 @Repository
 public interface FoodDetailsPropertyDetailsRepository extends JpaRepository<FoodDetailsPropertyDetails,Integer> {
-    @Query("SELECT fdpd.foodDetail.id FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.id = :foodID AND fdpd.propertyDetail.id IN :propertyDetailIDs")
+    @Query("SELECT fdpd.foodDetail.foodDetailID FROM FoodDetailsPropertyDetails fdpd " +
+            "WHERE fdpd.food.foodID = :foodID AND fdpd.propertyDetail.propertyDetailID IN (:propertyDetailIDs) " +
+            "GROUP BY fdpd.foodDetail.foodDetailID " +
+            "HAVING COUNT(DISTINCT fdpd.propertyDetail.propertyDetailID) = " +
+            "(SELECT COUNT(DISTINCT pd.propertyDetailID) FROM PropertyDetails pd WHERE pd.propertyDetailID IN (:propertyDetailIDs))")
+
     List<Integer> findFoodDetailIDsByFoodIDAndPropertyDetailIDs(@Param("foodID") int foodID, @Param("propertyDetailIDs") List<Integer> propertyDetailIDs);
-    @Query("SELECT DISTINCT fd.foodDetail.id FROM FoodDetailsPropertyDetails fd WHERE fd.food.id = :foodID")
+    @Query("SELECT DISTINCT fd.foodDetail.foodDetailID FROM FoodDetailsPropertyDetails fd WHERE fd.food.foodID = :foodID")
     List<Integer> findDistinctFoodDetailIDsByFoodID(@Param("foodID") int foodID);
     @Modifying
     @Transactional
-    @Query("DELETE FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.id = :foodID")
+    @Query("DELETE FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.foodID = :foodID")
     void deleteByFoodID(@Param("foodID") int foodID);
-    @Query("SELECT fdpd.foodDetailsPropertyDetailID FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.id = :foodID AND fdpd.propertyDetail.id IN :propertyDetailIDs")
+    @Query("SELECT fdpd.foodDetailsPropertyDetailID FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.foodID = :foodID AND fdpd.propertyDetail.propertyDetailID IN :propertyDetailIDs")
     List<Integer> findIDByFoodIDAndPropertyDetailIDs(@Param("foodID") int foodID, @Param("propertyDetailIDs") List<Integer> propertyDetailIDs);
 
 }

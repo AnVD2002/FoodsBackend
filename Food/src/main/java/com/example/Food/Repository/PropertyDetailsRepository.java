@@ -15,10 +15,17 @@ import java.util.List;
 
 @Repository
 public interface PropertyDetailsRepository extends JpaRepository<PropertyDetails,Integer> {
-    @Query("SELECT DISTINCT p.property.id FROM PropertyDetails p WHERE p.propertyDetailID IN :listId")
+    @Query("SELECT DISTINCT p.property.propertyID FROM PropertyDetails p WHERE p.propertyDetailID IN :listId")
     List<Integer> findPropertyIdsByPropertyDetailId(@Param("listId") List<Integer> listId);
 
-    @Query("SELECT pd.property.id FROM PropertyDetails pd WHERE pd.id IN :propertyDetailIds AND pd.property.id IN (SELECT fp.property.id FROM FoodProperties fp WHERE fp.food.id = :foodId)")
+    @Query("SELECT pd.property.propertyID FROM PropertyDetails pd WHERE pd.propertyDetailID IN :propertyDetailIds AND pd.property.propertyID IN (SELECT fp.property.propertyID FROM FoodProperties fp WHERE fp.food.foodID = :foodId)")
     List<Integer> findPropertyDetailsByFoodIdAndPropertyDetailIds(@Param("foodId") Integer foodId, @Param("propertyDetailIds") List<Integer> propertyDetailIds);
+
+    @Query("SELECT pd FROM PropertyDetails pd " +
+            "JOIN pd.property p " +
+            "JOIN p.foodProperties fp " +
+            "WHERE fp.foodID = :foodId")
+    List<PropertyDetails> getPropertyDetailsByFoodId(@Param("foodId") int foodId);
+
 
 }

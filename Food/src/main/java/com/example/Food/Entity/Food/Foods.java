@@ -1,5 +1,6 @@
 package com.example.Food.Entity.Food;
 
+import com.example.Food.Entity.Comment;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -41,6 +42,10 @@ public class Foods {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "food",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("food-foodProperties")
     private List<FoodProperties> foodProperties;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "food")
+    @JsonManagedReference("food-comments")
+    private List<Comment> comments;
 
 
 }

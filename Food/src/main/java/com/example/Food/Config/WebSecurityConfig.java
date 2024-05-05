@@ -27,6 +27,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/account/**").permitAll()
                         .requestMatchers("/api/v1/food/**").permitAll()
+                        .requestMatchers("/api/v1/cart/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleEnum.ADMIN.toString())
                         .anyRequest()
                         .authenticated())

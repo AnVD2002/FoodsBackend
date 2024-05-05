@@ -11,7 +11,7 @@ public class TokenResponse {
 
     private String accessToken;
 
-    private String token;
+    private String expiryToken;
 
     private String role;
 

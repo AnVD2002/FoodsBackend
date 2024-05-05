@@ -1,10 +1,12 @@
 package com.example.Food.Service.Foods;
 
+import com.example.Food.DTO.Request.FoodDetailRequest;
 import com.example.Food.DTO.Request.FoodPropertyDetailsRequest;
 import com.example.Food.DTO.Request.FoodRequest;
 import com.example.Food.DTO.Request.FoodUpdateRequest;
 import com.example.Food.DTO.Response.AllFoodDTO;
 import com.example.Food.DTO.Response.FoodDetailDTO;
+import com.example.Food.DTO.Response.FoodDetailResponse;
 import com.example.Food.DTO.Response.FoodResponse;
 import com.example.Food.Entity.Food.*;
 import com.example.Food.Entity.Food.Properties;
@@ -197,6 +199,36 @@ public class FoodsService implements ImplFoodsService{
         return propertyDetailsRepository.findAll();
     }
 
+    @Override
+    public List<PropertyDetails> getPropertyDetailByFoodID(int foodID) {
+        return propertyDetailsRepository.getPropertyDetailsByFoodId(foodID);
+    }
+
+    @Override
+    public ResponseEntity<?> getFoodDetailB(FoodDetailRequest foodDetailRequest) {
+        Optional<Foods> food = foodsRepository.findById(foodDetailRequest.getFoodID());
+        if (food.isEmpty()){
+            return new ResponseEntity<>("not exist foodID "+ foodDetailRequest.getFoodID(), HttpStatus.NOT_FOUND);
+        }
+        List<Integer> foodDetailsIDs = foodDetailsPropertyDetailsRepository.findFoodDetailIDsByFoodIDAndPropertyDetailIDs(foodDetailRequest.getFoodID(), foodDetailRequest.getPropertyDetails());
+        if(!foodDetailsIDs.isEmpty()){
+            Optional<FoodDetails> foodDetail = foodDetailsRepository.findById(foodDetailsIDs.get(0));
+            if(foodDetail.isPresent()){
+                FoodDetailResponse foodDetailResponse = FoodDetailResponse.builder()
+                        .foodDetailName(foodDetail.get().getFoodDetailName())
+                        .price(foodDetail.get().getPrice())
+                        .foodDetailID(foodDetail.get().getFoodDetailID())
+                        .description(food.get().getDescription())
+                        .quantity(foodDetail.get().getQuantity())
+                        .img(food.get().getImage())
+                        .build();
+                return new ResponseEntity<>(foodDetailResponse,HttpStatus.OK);
+            }
+
+        }
+        return new ResponseEntity<>("not exist ", HttpStatus.NOT_FOUND);
+
+    }
     public String GetName(int foodID, List<Integer> propertyDetailIDs) {
         Optional<Foods> food = foodsRepository.findById(foodID);
         StringBuilder foodDetailsName = new StringBuilder();
@@ -212,6 +244,7 @@ public class FoodsService implements ImplFoodsService{
         }
         return foodName + foodDetailsName.toString();
     }
+
 
 
 }

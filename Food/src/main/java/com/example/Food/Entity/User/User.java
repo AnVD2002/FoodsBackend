@@ -1,6 +1,8 @@
 package com.example.Food.Entity.User;
 
 
+import com.example.Food.Entity.Cart.Carts;
+import com.example.Food.Entity.Comment;
 import com.example.Food.Entity.Order.Orders;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -32,11 +34,11 @@ public class User {
     private String password;
     @Column(name = "decentralization_id",insertable = false,updatable = false)
     private int decentralizationID;
-    @Column(name = "updatePasswordToken")
+    @Column(name = "update_password_token")
     private String updatePasswordToken;
     @Column(name = "status")
     private boolean isConfirmed;
-    @Column(name = "updatePasswordTokenExpiry")
+    @Column(name = "update_password_token_expiry")
     private LocalDate updatePasswordTokenExpiry;
     @ManyToOne
     @JsonBackReference
@@ -46,4 +48,12 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonManagedReference("user-orders")
     private List<Orders> orders;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference("user-comments")
+    private List<Comment> comments;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonBackReference("cart-user")
+    private Carts cart;
 }

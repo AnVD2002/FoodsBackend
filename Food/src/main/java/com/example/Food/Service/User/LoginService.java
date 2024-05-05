@@ -43,7 +43,7 @@ public class LoginService implements ImplLoginService{
                 String jwtToken = jwtProvider.generateToken(new CustomUserDetails(findByUserName.get()));
                 User user = UpdateToken(loginRequest.getUsername());
                 return TokenResponse.builder()
-                        .token(user.getUpdatePasswordToken())
+                        .expiryToken(user.getUpdatePasswordToken())
                         .accessToken(jwtToken)
                         .role(RoleEnum.USER.toString())
                         .message("Login thanh cong")

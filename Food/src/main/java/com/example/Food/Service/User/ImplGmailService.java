@@ -1,4 +1,4 @@
-package com.example.Food.Service.User.Mail;
+package com.example.Food.Service.User;
 
 import org.springframework.http.ResponseEntity;
 
