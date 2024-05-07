@@ -90,7 +90,8 @@ public class CommentService implements ImplCommentService{
     @Override
     public List<CommentResponse> getResponseCommentByFoodID(int foodID) {
         List<Comment> commentList = commentRepository.getCommentByFoodID(foodID);
-        List<CommentResponse> responseList = commentList.stream().map(comment -> {
+        List<CommentResponse> responseList;
+        responseList = commentList.stream().map(comment -> {
             CommentResponse response = new CommentResponse();
             response.setUserID(comment.getUser().getUserID());
             response.setUserName(comment.getUser().getUserName());
@@ -128,4 +129,6 @@ public class CommentService implements ImplCommentService{
         }
         return new ResponseEntity<>("not exist comment", HttpStatus.NOT_FOUND);
     }
+
+
 }

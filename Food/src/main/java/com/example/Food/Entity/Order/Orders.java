@@ -24,8 +24,14 @@ public class Orders {
     private int orderID;
     @Column(name = "user_id", insertable = false, updatable = false)
     private int userID;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "address")
+    private String address;
     @Column(name = "order_date")
     private LocalDate orderDate;
+    @Column(name = "number_phone")
+    private String numberPhone;
     @Column(name = "total_price")
     private String shippingAddress;
     @Column(name = "status")
@@ -36,13 +42,9 @@ public class Orders {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    @JsonManagedReference("order-orderDetails")
-    private List<OrderDetails> orderDetails;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    @JsonManagedReference("order-payments")
-    private List<Payment> payments;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "order")
+    @JsonManagedReference("order-payment")
+    private Payment payment;
 
 
 }

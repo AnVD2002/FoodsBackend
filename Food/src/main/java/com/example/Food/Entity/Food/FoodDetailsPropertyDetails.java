@@ -6,15 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-import com.example.Food.Entity.Order.OrderDetails;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.List;
-
-
 @Entity
 @Getter
 @Setter

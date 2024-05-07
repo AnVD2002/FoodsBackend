@@ -56,7 +56,7 @@ public class CartService implements ImplCartService {
         if (cart.isPresent()) {
             Optional<CartItems> cartItem = cartItemsRepository.findCartItemByFoodDetailID(foodDetail.get().getFoodDetailID());
             if (cartItem.isPresent()) {
-                cartItem.get().setQuantity(cartRequest.getQuantity());
+                cartItem.get().setQuantity(cartRequest.getQuantity()+cartItem.get().getQuantity());
                 cartItemsRepository.save(cartItem.get());
                 return new ResponseEntity<>("save completed", HttpStatus.OK);
             }

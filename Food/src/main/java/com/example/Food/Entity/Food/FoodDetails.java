@@ -1,8 +1,6 @@
 package com.example.Food.Entity.Food;
 
 
-import com.example.Food.Entity.Order.OrderDetails;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,12 +25,6 @@ public class FoodDetails {
     private int quantity;
     @Column(name = "price")
     private double price;
-
-
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail")
-    @JsonManagedReference("foodDetail-orderDetails")
-    private List<OrderDetails> orderDetails;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("foodDetail-foodDetailsPropertyDetails")

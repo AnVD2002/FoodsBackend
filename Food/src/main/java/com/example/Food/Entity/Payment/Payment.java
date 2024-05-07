@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
@@ -29,16 +30,13 @@ public class Payment {
     @Column(name = "status")
     private boolean status;
     @Column(name = "payment_date")
-    private String paymentDate;
+    private LocalDate paymentDate;
 
-    @ManyToOne()
-    @JsonBackReference("order-payments")
+    @OneToOne()
+    @JsonBackReference("order-payment")
     @JoinColumn(name = "order_id")
     private Orders order;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "payment")
-    @JsonManagedReference("payment_paymentDetails")
-    private List<PaymentDetails> paymentDetails;
 
     @ManyToOne
     @JsonBackReference("paymentMethod-payments")
