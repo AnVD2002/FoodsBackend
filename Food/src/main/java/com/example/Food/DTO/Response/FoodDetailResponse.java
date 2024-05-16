@@ -8,10 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class FoodDetailResponse {
-    private int foodDetailID;
+    private Integer foodDetailID;
     private String foodDetailName;
     private String description;
     private double price;
-    private int quantity;
+    private Integer quantity;
     private String img;
 }

@@ -1,12 +1,17 @@
 package com.example.Food.Controller;
 
 import com.example.Food.DTO.Request.*;
+import com.example.Food.Entity.Food.Foods;
+import com.example.Food.Repository.FoodsRepository;
 import com.example.Food.Service.Comment.CommentService;
 import com.example.Food.Service.Foods.FoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RequestMapping("/api/v1/food/")
 @RestController
@@ -15,6 +20,9 @@ public class FoodController {
     private FoodsService foodsService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private FoodsRepository foodsRepository;
+
     @CrossOrigin
     @PostMapping(path = "createFoodProperty",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> CreateFoodProperty(@RequestBody FoodRequest request){
@@ -27,7 +35,7 @@ public class FoodController {
     }
     @CrossOrigin
     @DeleteMapping(path = "deleteFood", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> DeleteFood(@RequestParam int foodID){
+    public ResponseEntity<?> DeleteFood(@RequestParam Integer  foodID){
         return ResponseEntity.ok(foodsService.deleteFood(foodID));
     }
     @CrossOrigin
@@ -52,7 +60,7 @@ public class FoodController {
     }
     @CrossOrigin
     @GetMapping(path = "propertyDetailByFoodID")
-    public ResponseEntity<?> getPropertyDetailFoodID(@RequestParam int foodID){
+    public ResponseEntity<?> getPropertyDetailFoodID(@RequestParam Integer foodID){
         return ResponseEntity.ok(foodsService.getPropertyDetailByFoodID(foodID));
     }
     @CrossOrigin
@@ -67,17 +75,17 @@ public class FoodController {
     }
     @CrossOrigin
     @GetMapping(path = "commentByFoodID")
-    public ResponseEntity<?> getCommentByFoodID(@RequestParam int foodID) {
+    public ResponseEntity<?> getCommentByFoodID(@RequestParam Integer foodID) {
         return ResponseEntity.ok(commentService.getCommentByFoodID(foodID));
     }
     @CrossOrigin
     @GetMapping(path = "commentResponseByFoodID")
-    public ResponseEntity<?> getResponseCommentByFoodID(@RequestParam int foodID) {
+    public ResponseEntity<?> getResponseCommentByFoodID(@RequestParam Integer foodID) {
         return ResponseEntity.ok(commentService.getResponseCommentByFoodID(foodID));
     }
     @CrossOrigin
     @DeleteMapping(path = "deleteComment")
-    public ResponseEntity<?> deleteComment(@RequestParam int commentID){
+    public ResponseEntity<?> deleteComment(@RequestParam Integer commentID){
         return ResponseEntity.ok(commentService.deleteComment(commentID));
     }
     @CrossOrigin
@@ -89,5 +97,19 @@ public class FoodController {
     @GetMapping(path = "getFoodDetail")
     public ResponseEntity<?> getFoodDetail(@RequestBody FoodDetailRequest foodDetailRequest){
         return ResponseEntity.ok(foodsService.getFoodDetailB(foodDetailRequest));
+    }
+    @CrossOrigin
+    @GetMapping(path = "rating")
+    public ResponseEntity<?> getRating(@RequestParam Integer foodID){
+        Optional<Foods> food = foodsRepository.findById(foodID);
+        if(food.isEmpty()) {
+            return new ResponseEntity<>("not exist food", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(commentService.findRatingByFoodID(foodID));
+    }
+    @CrossOrigin
+    @PostMapping(path = "foodFilter")
+    public ResponseEntity<?> foodFilter(@RequestBody FoodFilterRequest foodFilterRequest){
+        return ResponseEntity.ok(foodsService.getFoodDetailsFilter(foodFilterRequest));
     }
 }

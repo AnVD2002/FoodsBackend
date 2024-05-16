@@ -9,6 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class FoodDetailRequest {
-    private int foodID;
+    private Integer foodID;
     private List<Integer> propertyDetails;
 }

@@ -18,11 +18,11 @@ public class PropertyDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "property_detail_id")
-    private int propertyDetailID;
+    private Integer propertyDetailID;
     @Column(name = "property_detail_name")
     private String propertyDetailName;
     @Column(name = "property_id",insertable = false, updatable = false)
-    private int propertyID;
+    private Integer propertyID;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyDetail")
     @JsonManagedReference("propertyDetail-foodDetailsPropertyDetails")

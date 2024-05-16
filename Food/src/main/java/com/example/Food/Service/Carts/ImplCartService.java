@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface ImplCartService {
     public ResponseEntity<?> addToCart(CartRequest cartRequest);
-    public ResponseEntity<?> getAllCartItems(int userID);
-    public ResponseEntity<?> removeCartItem(int itemID);
+    public ResponseEntity<?> getAllCartItems(Integer userID);
+    public ResponseEntity<?> removeCartItem(Integer itemID);
 
 
 }

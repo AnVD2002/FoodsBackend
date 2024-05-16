@@ -20,7 +20,7 @@ public class Foods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_id")
-    private int foodID;
+    private Integer foodID;
     @Column(name = "food_name")
     private String foodName;
     @Column(name = "image")
@@ -28,7 +28,7 @@ public class Foods {
     @Column(name = "description")
     private String description;
     @Column(name = "food_category_id",insertable = false, updatable = false)
-    private int foodCategoryID;
+    private Integer foodCategoryID;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "food", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("food-foodDetailsPropertyDetails")

@@ -18,7 +18,7 @@ public class Decentralization {
     @Id
     @Column(name = "decentralization_id")
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private int decentralizationID;
+    private Integer decentralizationID;
     @Column(name= "decentralization_name")
     @Enumerated(EnumType.STRING)
     private RoleEnum decentralizationName;

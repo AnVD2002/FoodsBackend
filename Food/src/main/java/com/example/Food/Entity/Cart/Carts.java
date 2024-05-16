@@ -20,9 +20,9 @@ public class Carts {
     @Id
     @Column(name = "cart_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cartID;
+    private Integer cartID;
     @Column(name = "user_id", insertable = false, updatable = false)
-    private int userID;
+    private Integer userID;
     @Column(name = "create_at")
     private LocalDate createAt;
     @Column(name = "update_at")

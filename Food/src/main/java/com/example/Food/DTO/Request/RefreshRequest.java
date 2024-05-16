@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateCommentRequest {
-    private Integer commentID;
-    private String content;
+public class RefreshRequest {
+    private String token;
 }

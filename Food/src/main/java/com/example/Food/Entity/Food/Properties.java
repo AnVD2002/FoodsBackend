@@ -18,7 +18,7 @@ public class Properties {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "property_id")
-    private int propertyID;
+    private Integer propertyID;
     @Column(name = "property-name")
     private String propertyName;
 

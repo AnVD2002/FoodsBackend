@@ -9,9 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BuyRequest {
-    private int userID;
+    private Integer userID;
     private String name;
     private String address;
     private String phone;
-    private int paymentMethodID;
+    private Integer paymentMethodID;
 }

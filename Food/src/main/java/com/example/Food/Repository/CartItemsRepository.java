@@ -12,10 +12,10 @@ import java.util.Optional;
 @Repository
 public interface CartItemsRepository extends JpaRepository<CartItems, Integer> {
     @Query("SELECT c from CartItems c where c.foodDetailID =:foodDetailID  ")
-    Optional<CartItems> findCartItemByFoodDetailID(@Param("foodDetailID") int foodDetailID);
+    Optional<CartItems> findCartItemByFoodDetailID(@Param("foodDetailID") Integer foodDetailID);
 
     @Query("SELECT c from CartItems c where c.cart.cartID =:cartID  ")
-    List<CartItems> findCartItemByCartID(@Param("cartID") int cartID);
+    List<CartItems> findCartItemByCartID(@Param("cartID") Integer cartID);
 
 
 }

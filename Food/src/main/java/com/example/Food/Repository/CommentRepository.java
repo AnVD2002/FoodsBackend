@@ -12,9 +12,11 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,Integer> {
     @Query("SELECT cm FROM Comment cm WHERE cm.food.foodID = :foodID")
-    List<Comment> getCommentByFoodID(@Param("foodID") int foodID);
+    List<Comment> getCommentByFoodID(@Param("foodID") Integer foodID);
     @Modifying
     @Query("delete Comment cm WHERE cm.parentID = :commentID")
-    void deleteByCommentID(@Param("commentID") int commentID);
+    void deleteByCommentID(@Param("commentID") Integer commentID);
+    @Query("SELECT AVG(c.rating) FROM Comment c WHERE c.food.foodID = :foodID AND c.rating IS NOT NULL")
+    Double findAverageRatingByFoodID(@Param("foodID") Integer foodID);
 
 }

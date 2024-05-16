@@ -19,12 +19,12 @@ public class CartController {
     }
     @CrossOrigin
     @GetMapping(path = "getCartItems")
-    public ResponseEntity<?> getCart(@RequestParam int userID){
+    public ResponseEntity<?> getCart(@RequestParam Integer userID){
         return ResponseEntity.ok(cartService.getAllCartItems(userID));
     }
     @CrossOrigin
     @DeleteMapping(path = "removeCartItem")
-    public ResponseEntity<?> removeCartItem(@RequestParam int cartItemID){
+    public ResponseEntity<?> removeCartItem(@RequestParam Integer cartItemID){
         return ResponseEntity.ok(cartService.removeCartItem(cartItemID));
     }
 }

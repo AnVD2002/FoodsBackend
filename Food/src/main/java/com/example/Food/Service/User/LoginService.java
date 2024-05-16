@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,22 +37,28 @@ public class LoginService implements ImplLoginService{
     public DecentralizationRepository decentralizationRepository;
     @Override
     public TokenResponse Login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword()));
-        Optional<User> findByUserName = userRepository.FindByName(loginRequest.getUsername());
-        if(findByUserName.isPresent()){
-            if (findByUserName.get().isConfirmed()) {
-                String jwtToken = jwtProvider.generateToken(new CustomUserDetails(findByUserName.get()));
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
+            CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+            if (userDetails.getUser().isConfirmed()) {
+                String jwtToken = jwtProvider.generateToken(userDetails);
                 User user = UpdateToken(loginRequest.getUsername());
                 return TokenResponse.builder()
                         .expiryToken(user.getUpdatePasswordToken())
                         .accessToken(jwtToken)
-                        .role(RoleEnum.USER.toString())
-                        .message("Login thanh cong")
+                        .role(userDetails.getAuthorities().toString())
+                        .message("Đăng nhập thành công")
                         .build();
+            } else {
+                return TokenResponse.builder().message("Tài khoản chưa được xác nhận").build();
             }
-            return TokenResponse.builder().message("Chua tao tk").build();
+        } catch (AuthenticationException e) {
+            return TokenResponse.builder().message("Sai tên tài khoản hoặc mật khẩu").build();
+        } catch (Exception e) {
+            return TokenResponse.builder().message("Lỗi server: " + e.getMessage()).build();
         }
-        return TokenResponse.builder().message("Sai ten tk hoac mk").build();
     }
     public boolean isLoggedIn(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

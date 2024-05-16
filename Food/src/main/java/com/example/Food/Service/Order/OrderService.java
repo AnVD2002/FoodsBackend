@@ -142,6 +142,7 @@ public class OrderService implements ImplOrderService{
         order.setNumberPhone(buyRequest.getPhone());
         order.setUser(user.get());
         order.setStatus(false);
+
         ordersRepository.save(order);
 
         Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(buyRequest.getPaymentMethodID());

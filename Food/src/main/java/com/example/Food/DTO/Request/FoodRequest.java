@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class FoodRequest {
-   private int foodCategoryID;
+   private Integer foodCategoryID;
    private String foodName;
    private List<Integer> propertyID;
 }

@@ -10,8 +10,8 @@ import java.util.List;
 @Builder
 public class FoodUpdateRequest {
     private String foodName;
-    private int foodID;
-    private int quantity;
+    private Integer foodID;
+    private Integer quantity;
     private double price;
     private String image;
     List<Integer> propertyDetailID;

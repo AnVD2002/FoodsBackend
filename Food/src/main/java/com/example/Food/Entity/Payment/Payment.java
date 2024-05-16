@@ -20,11 +20,11 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
-    private int paymentID;
+    private Integer paymentID;
     @Column(name = "order_id", insertable = false, updatable = false)
-    private int orderID;
+    private Integer orderID;
     @Column(name = "payment_method_id", insertable = false, updatable = false)
-    private int paymentMethodID;
+    private Integer paymentMethodID;
     @Column(name = "total")
     private double total;
     @Column(name = "status")

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface FoodPropertiesRepository extends JpaRepository<FoodProperties,Integer> {
     @Query(value = "SELECT DISTINCT fb.foodPropertyID  FROM FoodProperties fb WHERE fb.food.foodID =:foodID")
-    List<Integer> findFoodPropertyIDsByFoodID( @Param("foodID") int foodID);
+    List<Integer> findFoodPropertyIDsByFoodID( @Param("foodID") Integer foodID);
 
 
 }

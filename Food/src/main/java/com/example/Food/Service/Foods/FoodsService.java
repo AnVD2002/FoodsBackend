@@ -1,9 +1,6 @@
 package com.example.Food.Service.Foods;
 
-import com.example.Food.DTO.Request.FoodDetailRequest;
-import com.example.Food.DTO.Request.FoodPropertyDetailsRequest;
-import com.example.Food.DTO.Request.FoodRequest;
-import com.example.Food.DTO.Request.FoodUpdateRequest;
+import com.example.Food.DTO.Request.*;
 import com.example.Food.DTO.Response.AllFoodDTO;
 import com.example.Food.DTO.Response.FoodDetailDTO;
 import com.example.Food.DTO.Response.FoodDetailResponse;
@@ -11,9 +8,14 @@ import com.example.Food.DTO.Response.FoodResponse;
 import com.example.Food.Entity.Food.*;
 import com.example.Food.Entity.Food.Properties;
 import com.example.Food.Repository.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,11 @@ public class FoodsService implements ImplFoodsService{
     private FoodDetailsRepository foodDetailsRepository;
     @Autowired
     private FoodCategoriesRepository foodCategoriesRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+
+
+
     @Transactional
     @Override
     public ResponseEntity<?> CreateFoodWithProperties(FoodRequest foodRequest) {
@@ -131,7 +138,7 @@ public class FoodsService implements ImplFoodsService{
     }
     @Transactional
     @Override
-    public ResponseEntity<?> deleteFood(int foodID) {
+    public ResponseEntity<?> deleteFood(Integer foodID) {
         List<Integer> foodDetailIDs=  foodDetailsPropertyDetailsRepository.findDistinctFoodDetailIDsByFoodID(foodID);
         Optional<Foods> food = foodsRepository.findById(foodID);
         if(food.isEmpty()){
@@ -178,17 +185,27 @@ public class FoodsService implements ImplFoodsService{
     @Override
     public List<AllFoodDTO> getAllFoods() {
         List<Foods> foods = foodsRepository.findAll();
+        return getAllFoodDTOS(foods);
+    }
+
+    @NotNull
+    private List<AllFoodDTO> getAllFoodDTOS(List<Foods> foods) {
         List<AllFoodDTO> allFoodDTOs = new ArrayList<>();
         for (Foods food : foods) {
+            Double rating = commentRepository.findAverageRatingByFoodID(food.getFoodID());
+            if(rating==null){
+                rating=0.0;
+            }
             Set<FoodDetailDTO> foodDetailDTOsSet = food.getFoodDetailsPropertyDetails().stream()
                     .map(fpdd -> new FoodDetailDTO(fpdd.getFoodDetail().getFoodDetailID(), fpdd.getFoodDetail().getPrice(), fpdd.getFoodDetail().getQuantity(),fpdd.getFoodDetail().getFoodDetailName()))
                     .collect(Collectors.toSet());
             List<FoodDetailDTO> foodDetailDTOs = new ArrayList<>(foodDetailDTOsSet);
-            AllFoodDTO allFoodDTO = new AllFoodDTO(food.getFoodID(), food.getFoodName(), food.getDescription() , food.getImage() ,food.getFoodCategory().getFoodCategoryID(), foodDetailDTOs);
+            AllFoodDTO allFoodDTO = new AllFoodDTO(food.getFoodID(), food.getFoodName(), food.getDescription() , food.getImage() ,food.getFoodCategory().getFoodCategoryID(),rating, foodDetailDTOs);
             allFoodDTOs.add(allFoodDTO);
         }
         return allFoodDTOs;
     }
+
     @Override
     public List<FoodCategories> getAllFoodCategories() {
         return foodCategoriesRepository.findAll();
@@ -200,7 +217,7 @@ public class FoodsService implements ImplFoodsService{
     }
 
     @Override
-    public List<PropertyDetails> getPropertyDetailByFoodID(int foodID) {
+    public List<PropertyDetails> getPropertyDetailByFoodID(Integer foodID) {
         return propertyDetailsRepository.getPropertyDetailsByFoodId(foodID);
     }
 
@@ -229,6 +246,34 @@ public class FoodsService implements ImplFoodsService{
         return new ResponseEntity<>("not exist ", HttpStatus.NOT_FOUND);
 
     }
+
+    @Override
+    public List<AllFoodDTO> getFoodDetailsFilter(FoodFilterRequest foodFilterRequest) {
+        Specification<Foods> spec = Specification.where(null);
+        if (foodFilterRequest.getCategoryID() != null) {
+            spec = spec.and(FoodSpecification.hasCategory(foodFilterRequest.getCategoryID()));
+        }
+        if (foodFilterRequest.getRating() != null) {
+            spec = spec.and(FoodSpecification.hasAverageRating(foodFilterRequest.getRating()));
+        }
+        if (foodFilterRequest.getName() != null) {
+            spec = spec.and(FoodSpecification.hasNameLike(foodFilterRequest.getName()));
+        }
+
+        int page = (foodFilterRequest.getPage() != null) ? foodFilterRequest.getPage() : 1;
+        int pageSize = (foodFilterRequest.getPageSize() != null) ? foodFilterRequest.getPageSize() : 10;
+
+
+        Pageable pageable = PageRequest.of(
+                page - 1,
+                pageSize
+        );
+        spec = spec.and(FoodSpecification.hasPagination(pageable));
+        Page<Foods> foodsPage = foodsRepository.findAll(spec, pageable);
+        List<Foods> foods = foodsPage.getContent();
+        return getAllFoodDTOS(foods);
+    }
+
     public String GetName(int foodID, List<Integer> propertyDetailIDs) {
         Optional<Foods> food = foodsRepository.findById(foodID);
         StringBuilder foodDetailsName = new StringBuilder();
@@ -244,6 +289,10 @@ public class FoodsService implements ImplFoodsService{
         }
         return foodName + foodDetailsName.toString();
     }
+
+
+
+
 
 
 

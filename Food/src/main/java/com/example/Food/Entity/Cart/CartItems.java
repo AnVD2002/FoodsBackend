@@ -15,15 +15,15 @@ public class CartItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_item_id")
-    private int cartItemID;
+    private Integer cartItemID;
     @Column(name = "cart_id" , insertable = false, updatable = false)
-    private int cartID;
+    private Integer cartID;
     @Column(name = "food_detail_id")
-    private int foodDetailID;
+    private Integer foodDetailID;
     @Column(name = "food_detail_name")
     private String foodDetailName;
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
     @Column(name = "price")
     private double price;
     @Column(name = "img")

@@ -23,7 +23,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userid")
-    private int UserID;
+    private Integer UserID;
     @Column(name = "username")
     private String userName;
     @Column(name = "email")
@@ -33,7 +33,7 @@ public class User {
     @Column(name = "password")
     private String password;
     @Column(name = "decentralization_id",insertable = false,updatable = false)
-    private int decentralizationID;
+    private Integer decentralizationID;
     @Column(name = "update_password_token")
     private String updatePasswordToken;
     @Column(name = "status")

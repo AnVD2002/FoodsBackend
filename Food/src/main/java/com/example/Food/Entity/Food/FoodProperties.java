@@ -15,11 +15,11 @@ public class FoodProperties {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_property_id")
-    private int foodPropertyID;
+    private Integer foodPropertyID;
     @Column(name = "food_id", insertable = false, updatable = false)
-    private int foodID;
+    private Integer foodID;
     @Column(name = "property_id", insertable = false, updatable = false)
-    private int propertyID;
+    private Integer propertyID;
 
     @ManyToOne
     @JsonBackReference("food-foodProperties")

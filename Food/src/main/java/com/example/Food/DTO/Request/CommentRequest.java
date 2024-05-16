@@ -10,8 +10,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class CommentRequest {
-    private int userID;
-    private int foodID;
+    private Integer userID;
+    private Integer foodID;
     private LocalDate createAt;
     private String content;
+    private Integer rating;
 }

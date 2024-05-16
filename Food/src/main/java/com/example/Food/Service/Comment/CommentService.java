@@ -40,6 +40,7 @@ public class CommentService implements ImplCommentService{
                 comment.setFood(food.get());
                 comment.setCreateAt(LocalDate.now());
                 comment.setContent(commentRequest.getContent());
+                comment.setRating(commentRequest.getRating());
                 commentRepository.save(comment);
                 return new ResponseEntity<>(CommentResponse.builder()
                         .userID(user.get().getUserID())
@@ -47,6 +48,7 @@ public class CommentService implements ImplCommentService{
                         .foodID(commentRequest.getFoodID())
                         .content(commentRequest.getContent())
                         .createAt(LocalDate.now())
+                        .rating(commentRequest.getRating())
                         .userName(user.get().getUserName())
                         .build(), HttpStatus.OK);
             }
@@ -84,11 +86,11 @@ public class CommentService implements ImplCommentService{
         }
         return new ResponseEntity<>("not exist user ", HttpStatus.NOT_FOUND);
     }
-    public ResponseEntity<?> getCommentByFoodID(int foodID){
+    public ResponseEntity<?> getCommentByFoodID(Integer foodID){
         return new ResponseEntity<>(commentRepository.getCommentByFoodID(foodID),HttpStatus.OK);
     }
     @Override
-    public List<CommentResponse> getResponseCommentByFoodID(int foodID) {
+    public List<CommentResponse> getResponseCommentByFoodID(Integer foodID) {
         List<Comment> commentList = commentRepository.getCommentByFoodID(foodID);
         List<CommentResponse> responseList;
         responseList = commentList.stream().map(comment -> {
@@ -100,13 +102,14 @@ public class CommentService implements ImplCommentService{
             response.setContent(comment.getContent());
             response.setCreateAt(comment.getCreateAt());
             response.setCommentID(comment.getCommentID());
+            response.setRating(comment.getRating());
             return response;
         }).collect(Collectors.toList());
         return responseList;
     }
 
     @Override
-    public ResponseEntity<?> deleteComment(int commentID) {
+    public ResponseEntity<?> deleteComment(Integer commentID) {
         commentRepository.deleteById(commentID);
         commentRepository.deleteByCommentID(commentID);
         return new ResponseEntity<>("Xoa thanh cong", HttpStatus.OK);
@@ -128,6 +131,11 @@ public class CommentService implements ImplCommentService{
                     .commentID(comment.get().getParentID()).build(),HttpStatus.OK);
         }
         return new ResponseEntity<>("not exist comment", HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<?> findRatingByFoodID(Integer foodID) {
+        return new ResponseEntity<>(commentRepository.findAverageRatingByFoodID(foodID),HttpStatus.OK);
     }
 
 

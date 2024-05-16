@@ -10,8 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class CartRequest {
-    private int foodID;
+    private Integer foodID;
     private List<Integer> propertyDetailID;
-    private int userID;
-    private int quantity;
+    private Integer userID;
+    private Integer quantity;
 }

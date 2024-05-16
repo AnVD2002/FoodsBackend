@@ -10,10 +10,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class FoodDetailDTO {
-    private int foodDetailId;
+    private Integer foodDetailId;
     private double price;
-    private int quantity;
+    private Integer quantity;
     private String foodDetailName;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

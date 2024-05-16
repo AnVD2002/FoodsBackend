@@ -10,8 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class FoodPropertyDetailsRequest {
-    private int foodID;
-    private int quantity;
+    private Integer foodID;
+    private Integer quantity;
     private double price;
     List<Integer> propertyDetailID;
 }

@@ -21,9 +21,9 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private int orderID;
+    private Integer orderID;
     @Column(name = "user_id", insertable = false, updatable = false)
-    private int userID;
+    private Integer userID;
     @Column(name = "name")
     private String name;
     @Column(name = "address")
@@ -32,8 +32,6 @@ public class Orders {
     private LocalDate orderDate;
     @Column(name = "number_phone")
     private String numberPhone;
-    @Column(name = "total_price")
-    private String shippingAddress;
     @Column(name = "status")
     private boolean status;
 

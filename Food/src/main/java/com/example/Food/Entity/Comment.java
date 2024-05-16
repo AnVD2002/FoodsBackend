@@ -23,15 +23,17 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private int commentID;
+    private Integer commentID;
     @Column(name = "parent_id")
-    private int parentID;
+    private Integer parentID;
     @Column(name = "content")
     private String content;
     @Column(name = "create_at")
     private LocalDate createAt;
+    @Column(name = "rating")
+    private Integer rating;
     @Column(name="food_id", insertable = false, updatable = false)
-    private int foodID;
+    private Integer foodID;
     @Column(name = "user_id", insertable = false, updatable = false)
     private int userID;
 

@@ -18,11 +18,11 @@ public class FoodDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_detail_id")
-    private int foodDetailID;
+    private Integer foodDetailID;
     @Column(name = "food_detail_name")
     private String foodDetailName;
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
     @Column(name = "price")
     private double price;
 

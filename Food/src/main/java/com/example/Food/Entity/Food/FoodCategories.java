@@ -17,7 +17,7 @@ public class FoodCategories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_category_id")
-    private int foodCategoryID;
+    private Integer foodCategoryID;
     @Column(name = "food_category_name")
     private String foodCategoryName;
     @Column(name = "image")

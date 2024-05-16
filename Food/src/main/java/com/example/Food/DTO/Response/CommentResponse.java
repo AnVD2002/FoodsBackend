@@ -10,11 +10,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class CommentResponse {
-    private int userID;
+    private Integer userID;
     private String userName;
-    private int foodID;
-    private int parentID;
+    private Integer foodID;
+    private Integer parentID;
     private String content;
-    private int commentID;
+    private Integer commentID;
     private LocalDate createAt;
+    private Integer rating;
 }

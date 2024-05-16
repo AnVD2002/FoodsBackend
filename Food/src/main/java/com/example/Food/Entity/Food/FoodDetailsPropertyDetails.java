@@ -17,13 +17,13 @@ public class FoodDetailsPropertyDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     @Column(name = "food_details_property_details_id")
-    private int foodDetailsPropertyDetailID;
+    private Integer foodDetailsPropertyDetailID;
     @Column(name = "food_id",insertable = false,updatable = false)
-    private int foodID;
+    private Integer foodID;
     @Column(name = "property_detail_id",insertable = false,updatable = false)
-    private int propertyDetailID;
+    private Integer propertyDetailID;
     @Column(name = "food_detail_id",insertable = false,updatable = false)
-    private int foodDetailID;
+    private Integer foodDetailID;
 
     @ManyToOne()
     @JsonBackReference("propertyDetail-foodDetailsPropertyDetails")

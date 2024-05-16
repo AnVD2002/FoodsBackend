@@ -11,9 +11,10 @@ import java.util.List;
 public interface ImplCommentService {
     public ResponseEntity<?> comment(CommentRequest commentRequest);
     public ResponseEntity<?> repComment(RepCommentRequest repCommentRequest);
-    public ResponseEntity<?> getCommentByFoodID(int foodID);
-    public List<CommentResponse> getResponseCommentByFoodID(int foodID);
-    public ResponseEntity<?> deleteComment(int commentID);
+    public ResponseEntity<?> getCommentByFoodID(Integer foodID);
+    public List<CommentResponse> getResponseCommentByFoodID(Integer foodID);
+    public ResponseEntity<?> deleteComment(Integer commentID);
     public ResponseEntity<?> updateComment(UpdateCommentRequest updateCommentRequest);
+    public ResponseEntity<?> findRatingByFoodID(Integer foodID);
 
 }

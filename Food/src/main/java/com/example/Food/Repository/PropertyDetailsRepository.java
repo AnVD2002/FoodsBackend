@@ -25,7 +25,7 @@ public interface PropertyDetailsRepository extends JpaRepository<PropertyDetails
             "JOIN pd.property p " +
             "JOIN p.foodProperties fp " +
             "WHERE fp.foodID = :foodId")
-    List<PropertyDetails> getPropertyDetailsByFoodId(@Param("foodId") int foodId);
+    List<PropertyDetails> getPropertyDetailsByFoodId(@Param("foodId") Integer foodId);
 
 
 }

@@ -98,7 +98,7 @@ public class CartService implements ImplCartService {
     }
 
     @Override
-    public ResponseEntity<?> getAllCartItems(int userID) {
+    public ResponseEntity<?> getAllCartItems(Integer userID) {
         Optional<Carts> cart = cartRepository.findCartByUserID(userID);
         if (cart.isEmpty()) {
             return new ResponseEntity<>("not exist cart", HttpStatus.NOT_FOUND);
@@ -108,7 +108,7 @@ public class CartService implements ImplCartService {
     }
 
     @Override
-    public ResponseEntity<?> removeCartItem(int itemID) {
+    public ResponseEntity<?> removeCartItem(Integer itemID) {
         Optional<CartItems> cartItemOptional = cartItemsRepository.findById(itemID);
         if (cartItemOptional.isEmpty()) {
             return new ResponseEntity<>("CartItem does not exist", HttpStatus.NOT_FOUND);
