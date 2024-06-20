@@ -34,15 +34,15 @@ public class Orders {
     private String numberPhone;
     @Column(name = "status")
     private boolean status;
+    @Column(name = "total")
+    private Double total;
 
     @ManyToOne()
     @JsonBackReference("user-orders")
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("order-payment")
     private Payment payment;
-
-
 }

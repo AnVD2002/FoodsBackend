@@ -25,8 +25,6 @@ public class Payment {
     private Integer orderID;
     @Column(name = "payment_method_id", insertable = false, updatable = false)
     private Integer paymentMethodID;
-    @Column(name = "total")
-    private double total;
     @Column(name = "status")
     private boolean status;
     @Column(name = "payment_date")

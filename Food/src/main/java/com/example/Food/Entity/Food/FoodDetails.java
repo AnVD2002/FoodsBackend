@@ -25,8 +25,11 @@ public class FoodDetails {
     private Integer quantity;
     @Column(name = "price")
     private double price;
+    @Column(name = "ordered")
+    private Integer ordered;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail")
     @JsonManagedReference("foodDetail-foodDetailsPropertyDetails")
     private List<FoodDetailsPropertyDetails> foodDetailsPropertyDetails;
+
 }

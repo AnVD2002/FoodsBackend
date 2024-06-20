@@ -40,20 +40,27 @@ public class User {
     private boolean isConfirmed;
     @Column(name = "update_password_token_expiry")
     private LocalDate updatePasswordTokenExpiry;
+    @Column(name = "refresh_token")
+    private String refreshToken;
+    @Column(name = "img")
+    private String img;
+    @Column(name = "number_phone")
+    private String numberPhone;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "decentralization_id")
     private Decentralization decentralization;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("user-orders")
     private List<Orders> orders;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("user-comments")
     private List<Comment> comments;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("cart-user")
     private Carts cart;
 }

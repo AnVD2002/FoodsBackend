@@ -29,7 +29,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/food/**").permitAll()
                         .requestMatchers("/api/v1/cart/**").permitAll()
                         .requestMatchers("/api/v1/payment/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleEnum.ADMIN.toString())
+                        .requestMatchers("/api/v1/profile/user/").permitAll()
+                        .requestMatchers("/api/v1/order/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").permitAll()
+                        //.requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleEnum.ADMIN.toString())
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -37,6 +40,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -44,21 +48,25 @@ public class WebSecurityConfig {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
+
     @Bean
     public UserService userService(){
         return new UserService();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){
         return new JwtAuthenticationFilter();
     }
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }
+

@@ -23,7 +23,6 @@ public class PropertyDetails {
     private String propertyDetailName;
     @Column(name = "property_id",insertable = false, updatable = false)
     private Integer propertyID;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyDetail")
     @JsonManagedReference("propertyDetail-foodDetailsPropertyDetails")
     private List<FoodDetailsPropertyDetails> foodDetailsPropertyDetails;
@@ -32,5 +31,7 @@ public class PropertyDetails {
     @JsonBackReference("property-propertyDetails")
     @JoinColumn(name = "property_id")
     private Properties property;
+
+
 
 }

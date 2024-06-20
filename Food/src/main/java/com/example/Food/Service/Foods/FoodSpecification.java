@@ -15,6 +15,10 @@ public class FoodSpecification {
     public static Specification<Foods> hasNameLike(String name) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("foodName"), "%"+name.toLowerCase()+"%");
     }
+    public static Specification<Foods> hasFoodID(Integer FoodID) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("foodID"), FoodID);
+    }
+
     public static Specification<Foods> hasAverageRating(Double averageRating) {
         return (root, query, cb) -> {
             Subquery<Double> subquery = query.subquery(Double.class);

@@ -1,6 +1,7 @@
 package com.example.Food.Controller;
 
-import com.example.Food.DTO.Request.CartRequest;
+import com.example.Food.DTO.Request.ClientRequest.CartRequest;
+import com.example.Food.DTO.Request.ClientRequest.UpdateCartItemRequest;
 import com.example.Food.Service.Carts.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,12 +20,17 @@ public class CartController {
     }
     @CrossOrigin
     @GetMapping(path = "getCartItems")
-    public ResponseEntity<?> getCart(@RequestParam Integer userID){
-        return ResponseEntity.ok(cartService.getAllCartItems(userID));
+    public ResponseEntity<?> getCart(@RequestParam String userName){
+        return ResponseEntity.ok(cartService.getAllCartItems(userName));
     }
     @CrossOrigin
     @DeleteMapping(path = "removeCartItem")
     public ResponseEntity<?> removeCartItem(@RequestParam Integer cartItemID){
         return ResponseEntity.ok(cartService.removeCartItem(cartItemID));
+    }
+    @CrossOrigin
+    @PutMapping(path = "updateCartItems")
+    public ResponseEntity<?> updateCartItems(@RequestBody UpdateCartItemRequest request){
+        return ResponseEntity.ok(cartService.updateCartItem(request));
     }
 }

@@ -1,9 +1,9 @@
 package com.example.Food.Service.Comment;
 
-import com.example.Food.DTO.Request.CommentRequest;
-import com.example.Food.DTO.Request.RepCommentRequest;
-import com.example.Food.DTO.Request.UpdateCommentRequest;
-import com.example.Food.DTO.Response.CommentResponse;
+import com.example.Food.DTO.Request.User.CommentRequest;
+import com.example.Food.DTO.Request.User.RepCommentRequest;
+import com.example.Food.DTO.Request.ClientRequest.UpdateCommentRequest;
+import com.example.Food.DTO.Response.User.CommentResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

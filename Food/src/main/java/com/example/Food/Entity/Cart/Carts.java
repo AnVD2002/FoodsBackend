@@ -27,6 +27,10 @@ public class Carts {
     private LocalDate createAt;
     @Column(name = "update_at")
     private LocalDate updateAt;
+    @Column(name = "total")
+    private Double total;
+    @Column(name = "promote_id", insertable = false, updatable = false)
+    private Integer promoteID;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -36,6 +40,14 @@ public class Carts {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
     @JsonManagedReference("cart-cartItems")
     private List<CartItems> cartItems;
+
+    @ManyToOne()
+    @JsonBackReference("promote-carts")
+    @JoinColumn(name = "promote_code")
+    private Promote promote;
+
+
+
 
 
 

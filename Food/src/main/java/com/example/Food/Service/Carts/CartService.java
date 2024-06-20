@@ -1,14 +1,13 @@
 package com.example.Food.Service.Carts;
 
-import com.example.Food.DTO.Request.CartRequest;
+import com.example.Food.DTO.Request.ClientRequest.CartRequest;
+import com.example.Food.DTO.Request.ClientRequest.UpdateCartItemRequest;
 import com.example.Food.Entity.Cart.CartItems;
 import com.example.Food.Entity.Cart.Carts;
 import com.example.Food.Entity.Food.FoodDetails;
-import com.example.Food.Entity.Food.FoodDetailsPropertyDetails;
 import com.example.Food.Entity.Food.Foods;
 import com.example.Food.Entity.User.User;
 import com.example.Food.Repository.*;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,7 @@ public class CartService implements ImplCartService {
 
     @Override
     public ResponseEntity<?> addToCart(CartRequest cartRequest) {
-        Optional<User> user = userRepository.findById((cartRequest.getUserID()));
+        Optional<User> user = userRepository.FindByName(cartRequest.getUserName());
         if (user.isEmpty()) {
             return new ResponseEntity<>("not exist user", HttpStatus.NOT_FOUND);
         }
@@ -49,15 +48,24 @@ public class CartService implements ImplCartService {
             return new ResponseEntity<>("not exist foodDetail", HttpStatus.NOT_FOUND);
         }
         Optional<FoodDetails> foodDetail = foodDetailsRepository.findById(foodDetailIDs.get(0));
-        Optional<Carts> cart = cartRepository.findCartByUserID(cartRequest.getUserID());
+        Optional<Carts> cart = cartRepository.findCartByUserName(cartRequest.getUserName());
         if (foodDetail.isEmpty()) {
             return new ResponseEntity<>("not exist foodDetail", HttpStatus.NOT_FOUND);
         }
+        double sum =0;
         if (cart.isPresent()) {
-            Optional<CartItems> cartItem = cartItemsRepository.findCartItemByFoodDetailID(foodDetail.get().getFoodDetailID());
-            if (cartItem.isPresent()) {
-                cartItem.get().setQuantity(cartRequest.getQuantity()+cartItem.get().getQuantity());
-                cartItemsRepository.save(cartItem.get());
+            Optional<CartItems> cartItemOpt = cartItemsRepository.findCartItemByFoodDetailID(foodDetail.get().getFoodDetailID(), cart.get().getCartID());
+            if (cartItemOpt.isPresent()) {
+                cart.get().setTotal(sum);
+                cartRepository.save(cart.get());
+                cartItemOpt.get().setQuantity(cartRequest.getQuantity()+cartItemOpt.get().getQuantity());
+                cartItemsRepository.save(cartItemOpt.get());
+                for (CartItems cartItem : cart.get().getCartItems()) {
+                    if(cartItem.getQuantity()>foodDetail.get().getQuantity()){
+                        return new ResponseEntity<>("not enough foodDetail", HttpStatus.NOT_FOUND);
+                    }
+                    sum += cartItem.getPrice()*cartItem.getQuantity();
+                }
                 return new ResponseEntity<>("save completed", HttpStatus.OK);
             }
             CartItems newCartItem = new CartItems();
@@ -71,6 +79,10 @@ public class CartService implements ImplCartService {
             cartItemsRepository.save(newCartItem);
             cart.get().setUpdateAt(LocalDate.now());
             cart.get().getCartItems().add(newCartItem);
+            for (CartItems cartItem : cart.get().getCartItems()) {
+                sum += cartItem.getPrice()*cartItem.getQuantity();
+            }
+            cart.get().setTotal(sum);
             cartRepository.save(cart.get());
             return new ResponseEntity<>("save completed", HttpStatus.OK);
 
@@ -90,16 +102,16 @@ public class CartService implements ImplCartService {
         newCartItem.setFoodDetailName(foodDetail.get().getFoodDetailName());
         newCartItem.setFoodDetailID(foodDetail.get().getFoodDetailID());
         cartItemsRepository.save(newCartItem);
-
-
+        sum+=foodDetail.get().getPrice()*foodDetail.get().getQuantity();
+        newCart.setTotal(sum*cartRequest.getQuantity());
         newCart.getCartItems().add(newCartItem);
         cartRepository.save(newCart);
         return new ResponseEntity<>("save new cart completed", HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getAllCartItems(Integer userID) {
-        Optional<Carts> cart = cartRepository.findCartByUserID(userID);
+    public ResponseEntity<?> getAllCartItems(String userName) {
+        Optional<Carts> cart = cartRepository.findCartByUserName(userName);
         if (cart.isEmpty()) {
             return new ResponseEntity<>("not exist cart", HttpStatus.NOT_FOUND);
         }
@@ -113,7 +125,6 @@ public class CartService implements ImplCartService {
         if (cartItemOptional.isEmpty()) {
             return new ResponseEntity<>("CartItem does not exist", HttpStatus.NOT_FOUND);
         }
-
         CartItems cartItem = cartItemOptional.get();
         Carts cart = cartItem.getCart();
 
@@ -121,10 +132,40 @@ public class CartService implements ImplCartService {
             cartItem.setQuantity(cartItem.getQuantity() - 1);
             cartItemsRepository.save(cartItem);
         } else {
+            cart.setTotal(0.0);
             cartItemsRepository.delete(cartItem);
         }
 
         return new ResponseEntity<>("Cart item updated or removed, but cart not deleted", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> updateCartItem(UpdateCartItemRequest request) {
+        if(request.getCartItemID()==null){
+            return new ResponseEntity<>("itemID is null", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getQuantity()==null){
+            return new ResponseEntity<>("quantity is null", HttpStatus.BAD_REQUEST);
+        }
+        Optional<CartItems> cartItemOptional = cartItemsRepository.findById(request.getCartItemID());
+        if (cartItemOptional.isEmpty()) {
+            return new ResponseEntity<>("CartItem does not exist", HttpStatus.NOT_FOUND);
+        }
+        CartItems cartItem = cartItemOptional.get();
+        Optional<Carts> cart = cartRepository.findById(cartItem.getCart().getCartID());
+        if (cart.isEmpty()) {
+            return new ResponseEntity<>("CartItem does not exist", HttpStatus.NOT_FOUND);
+        }
+        cartItem.setQuantity(request.getQuantity());
+        cartItemsRepository.save(cartItem);
+
+        double total = 0;
+        for(CartItems cartItems: cart.get().getCartItems()){
+            total += cartItems.getPrice()*cartItem.getQuantity();
+        }
+        cart.get().setTotal(total);
+        cartRepository.save(cart.get());
+        return new ResponseEntity<>("updated",HttpStatus.OK);
     }
 }
 

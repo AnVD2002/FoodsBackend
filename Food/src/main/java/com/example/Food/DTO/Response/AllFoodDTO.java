@@ -15,6 +15,6 @@ public class AllFoodDTO {
     private String description;
     private String image;
     private Integer foodCategoryID;
-    private double rating;
+    private Double rating;
     private List<FoodDetailDTO> foodDetails;
 }

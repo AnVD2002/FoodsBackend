@@ -1,6 +1,8 @@
 package com.example.Food.Controller;
 
-import com.example.Food.DTO.Request.*;
+import com.example.Food.DTO.Request.ClientRequest.*;
+import com.example.Food.DTO.Request.User.CommentRequest;
+import com.example.Food.DTO.Request.User.RepCommentRequest;
 import com.example.Food.Entity.Food.Foods;
 import com.example.Food.Repository.FoodsRepository;
 import com.example.Food.Service.Comment.CommentService;
@@ -34,7 +36,7 @@ public class FoodController {
         return ResponseEntity.ok(foodsService.createFoodWithPropertiesDetails(request));
     }
     @CrossOrigin
-    @DeleteMapping(path = "deleteFood", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "deleteFood")
     public ResponseEntity<?> DeleteFood(@RequestParam Integer  foodID){
         return ResponseEntity.ok(foodsService.deleteFood(foodID));
     }
@@ -112,4 +114,25 @@ public class FoodController {
     public ResponseEntity<?> foodFilter(@RequestBody FoodFilterRequest foodFilterRequest){
         return ResponseEntity.ok(foodsService.getFoodDetailsFilter(foodFilterRequest));
     }
+    @CrossOrigin
+    @PostMapping(path = "foodFilterClient")
+    public ResponseEntity<?> foodFilterClient(@RequestBody FoodDetailClientRequest foodDetailClientRequest){
+        return ResponseEntity.ok(foodsService.getFoodDetailsFilterClient(foodDetailClientRequest));
+    }
+    @CrossOrigin
+    @GetMapping(path = "foodDetailByID")
+    private ResponseEntity<?> foodDetailByID(@RequestParam Integer foodID){
+        return ResponseEntity.ok(foodsService.getFoodDetailByID(foodID));
+    }
+    @CrossOrigin
+    @PutMapping(path = "updateFoodDetail")
+    private ResponseEntity<?> updateFoodDetail(@RequestBody UpdateFoodDetailRequest request){
+        return ResponseEntity.ok(foodsService.updateFoodDetail(request));
+    }
+    @CrossOrigin
+    @DeleteMapping(path = "deleteFoodDetail")
+    private ResponseEntity<?> deleteFoodDetail(@RequestParam Integer foodDetailID){
+        return ResponseEntity.ok(foodsService.deleteFoodDetail(foodDetailID));
+    }
+
 }

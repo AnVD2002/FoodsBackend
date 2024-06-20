@@ -30,13 +30,21 @@ public interface FoodDetailsPropertyDetailsRepository extends JpaRepository<Food
             "HAVING COUNT(DISTINCT fdpd.propertyDetail.propertyDetailID) = " +
             "(SELECT COUNT(DISTINCT pd.propertyDetailID) FROM PropertyDetails pd WHERE pd.propertyDetailID IN (:propertyDetailIDs))")
     List<Integer> findFoodDetailIDsByFoodIDAndPropertyDetailIDs(@Param("foodID") Integer foodID, @Param("propertyDetailIDs") List<Integer> propertyDetailIDs);
+
     @Query("SELECT DISTINCT fd.foodDetail.foodDetailID FROM FoodDetailsPropertyDetails fd WHERE fd.food.foodID = :foodID")
     List<Integer> findDistinctFoodDetailIDsByFoodID(@Param("foodID") Integer foodID);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.foodID = :foodID")
     void deleteByFoodID(@Param("foodID") Integer foodID);
+
     @Query("SELECT fdpd.foodDetailsPropertyDetailID FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.foodID = :foodID AND fdpd.propertyDetail.propertyDetailID IN :propertyDetailIDs")
     List<Integer> findIDByFoodIDAndPropertyDetailIDs(@Param("foodID") Integer foodID, @Param("propertyDetailIDs") List<Integer> propertyDetailIDs);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.foodDetail.foodDetailID = :foodDetailID")
+    void findFoodDetailID(@Param("foodDetailID") Integer foodDetailID);
 
 }

@@ -43,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-        username = jwtProvider.ExtractUserName(jwt); // TODO Chích xuất người dùng từ JWT TOKEN
+        username = jwtProvider.ExtractUserName(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             CustomUserDetails userCustomDetails = (CustomUserDetails) this.userService.loadUserByUsername(username);
-            if (jwtProvider.isTokenValid(jwt, userCustomDetails)) //Kiểm tra 2 điều kiện (1 là jtw còn hạn không , 2 là tkhoan có toofn tại hay không)
+            if (jwtProvider.isTokenValid(jwt, userCustomDetails))
             {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userCustomDetails, null, userCustomDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

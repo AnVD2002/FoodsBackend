@@ -1,9 +1,9 @@
 package com.example.Food.Service.Comment;
 
-import com.example.Food.DTO.Request.CommentRequest;
-import com.example.Food.DTO.Request.RepCommentRequest;
-import com.example.Food.DTO.Request.UpdateCommentRequest;
-import com.example.Food.DTO.Response.CommentResponse;
+import com.example.Food.DTO.Request.User.CommentRequest;
+import com.example.Food.DTO.Request.User.RepCommentRequest;
+import com.example.Food.DTO.Request.ClientRequest.UpdateCommentRequest;
+import com.example.Food.DTO.Response.User.CommentResponse;
 import com.example.Food.Entity.Comment;
 import com.example.Food.Entity.Food.Foods;
 import com.example.Food.Entity.User.User;
@@ -32,7 +32,7 @@ public class CommentService implements ImplCommentService{
     @Override
     public ResponseEntity<?> comment(CommentRequest commentRequest) {
         Optional<Foods> food = foodsRepository.findById(commentRequest.getFoodID());
-        Optional<User> user = userRepository.findById((commentRequest.getUserID()));
+        Optional<User> user = userRepository.FindByName(commentRequest.getUserName());
         if(user.isPresent()){
             if(food.isPresent()){
                 Comment comment = new Comment();
@@ -41,6 +41,7 @@ public class CommentService implements ImplCommentService{
                 comment.setCreateAt(LocalDate.now());
                 comment.setContent(commentRequest.getContent());
                 comment.setRating(commentRequest.getRating());
+                comment.setParentID(0);
                 commentRepository.save(comment);
                 return new ResponseEntity<>(CommentResponse.builder()
                         .userID(user.get().getUserID())
@@ -50,6 +51,7 @@ public class CommentService implements ImplCommentService{
                         .createAt(LocalDate.now())
                         .rating(commentRequest.getRating())
                         .userName(user.get().getUserName())
+                        .parentID(0)
                         .build(), HttpStatus.OK);
             }
             return new ResponseEntity<>("not exist food", HttpStatus.NOT_FOUND);
@@ -59,7 +61,7 @@ public class CommentService implements ImplCommentService{
     @Override
     public ResponseEntity<?> repComment(RepCommentRequest repCommentRequest) {
         Optional<Foods> food = foodsRepository.findById(repCommentRequest.getFoodID());
-        Optional<User> user = userRepository.findById((repCommentRequest.getUserID()));
+        Optional<User> user = userRepository.FindByName(repCommentRequest.getUserName());
         Optional<Comment> comment = commentRepository.findById(repCommentRequest.getParentID());
         if(user.isPresent()){
             if(food.isPresent()){
