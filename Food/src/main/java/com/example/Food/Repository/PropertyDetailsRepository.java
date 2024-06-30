@@ -27,5 +27,7 @@ public interface PropertyDetailsRepository extends JpaRepository<PropertyDetails
             "WHERE fp.foodID = :foodId")
     List<PropertyDetails> getPropertyDetailsByFoodId(@Param("foodId") Integer foodId);
 
+    List<PropertyDetails> findPropertyDetailsByPropertyID(Integer propertyID);
+
 
 }

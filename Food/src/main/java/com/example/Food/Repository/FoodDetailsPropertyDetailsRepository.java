@@ -1,5 +1,6 @@
 package com.example.Food.Repository;
 
+import com.example.Food.Entity.Food.FoodDetails;
 import com.example.Food.Entity.Food.FoodDetailsPropertyDetails;
 
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FoodDetailsPropertyDetailsRepository extends JpaRepository<FoodDetailsPropertyDetails,Integer> {
@@ -47,4 +49,6 @@ public interface FoodDetailsPropertyDetailsRepository extends JpaRepository<Food
     @Query("DELETE FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.foodDetail.foodDetailID = :foodDetailID")
     void findFoodDetailID(@Param("foodDetailID") Integer foodDetailID);
 
+    @Query("SELECT fdpd.foodDetail FROM FoodDetailsPropertyDetails fdpd WHERE fdpd.food.foodID = :foodID AND fdpd.propertyDetail.propertyDetailID IN :propertyDetailIDs GROUP BY fdpd.foodDetail.foodDetailID HAVING COUNT(DISTINCT fdpd.propertyDetail.propertyDetailID) = :propertyDetailCount")
+    Optional<FoodDetails> findFoodDetailByFoodIDAndPropertyDetailIDs(@Param("foodID") Integer foodID, @Param("propertyDetailIDs") List<Integer> propertyDetailIDs, @Param("propertyDetailCount") Integer propertyDetailCount);
 }

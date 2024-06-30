@@ -14,4 +14,5 @@ public class FoodRequest {
    private String foodName;
    private List<Integer> propertyID;
    private String img;
+   private String description;
 }

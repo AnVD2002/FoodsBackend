@@ -2,13 +2,12 @@ package com.example.Food.DTO.Request.ClientRequest;
 
 import lombok.*;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class TransactionalRequest {
-    private Long amountParam;
-    private Integer orderID;
+public class CancelRequest {
+    private Integer orderDetailID;
+    private String reason;
 }

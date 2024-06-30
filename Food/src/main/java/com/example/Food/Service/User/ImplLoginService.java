@@ -8,4 +8,5 @@ import org.springframework.http.ResponseEntity;
 public interface ImplLoginService {
     public ResponseEntity<?> Login(LoginRequest loginRequest);
     public ResponseEntity<?> changePassword(ChangePasswordRequest request);
+    public ResponseEntity<?> refreshAccessToken(String refreshToken);
 }

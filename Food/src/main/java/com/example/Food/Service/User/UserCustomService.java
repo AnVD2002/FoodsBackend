@@ -212,6 +212,24 @@ public class UserCustomService implements UserCustomServiceImpl{
         userRepository.save(user.get());
         return new ResponseEntity<>("update Completed",HttpStatus.OK);
     }
-
-
+    @Override
+    public ResponseEntity<?> getUserID(String username){
+        if(username.isEmpty()){
+            return new ResponseEntity<>("Username is empty",HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> user = userRepository.FindByName(username);
+        if(user.isEmpty()){
+            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
+        }
+        Integer id = user.get().getUserID();
+        return new ResponseEntity<>(id,HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<?> getTotalUser(){
+        List<User> users = userRepository.findAll();
+        if(users.isEmpty()){
+            return new ResponseEntity<>("not exist user",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(users.size(), HttpStatus.OK);
+    }
 }

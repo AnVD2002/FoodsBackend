@@ -1,6 +1,8 @@
 package com.example.Food.Entity.Food;
 
 
+import com.example.Food.Entity.Cart.CartItems;
+import com.example.Food.Entity.Order.OrderDetails;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,5 +33,13 @@ public class FoodDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "foodDetail")
     @JsonManagedReference("foodDetail-foodDetailsPropertyDetails")
     private List<FoodDetailsPropertyDetails> foodDetailsPropertyDetails;
+
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "foodDetail")
+    @JsonManagedReference("foodDetail-foodDetailsPropertyDetails")
+    private List<OrderDetails> orderDetails;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "foodDetail")
+    @JsonManagedReference("foodDetail-cartItem")
+    private CartItems cartItem;
 
 }

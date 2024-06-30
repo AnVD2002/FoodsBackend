@@ -56,8 +56,6 @@ public class CartService implements ImplCartService {
         if (cart.isPresent()) {
             Optional<CartItems> cartItemOpt = cartItemsRepository.findCartItemByFoodDetailID(foodDetail.get().getFoodDetailID(), cart.get().getCartID());
             if (cartItemOpt.isPresent()) {
-                cart.get().setTotal(sum);
-                cartRepository.save(cart.get());
                 cartItemOpt.get().setQuantity(cartRequest.getQuantity()+cartItemOpt.get().getQuantity());
                 cartItemsRepository.save(cartItemOpt.get());
                 for (CartItems cartItem : cart.get().getCartItems()) {
@@ -66,9 +64,12 @@ public class CartService implements ImplCartService {
                     }
                     sum += cartItem.getPrice()*cartItem.getQuantity();
                 }
+                cart.get().setTotal(sum);
+                cartRepository.save(cart.get());
                 return new ResponseEntity<>("save completed", HttpStatus.OK);
             }
             CartItems newCartItem = new CartItems();
+            newCartItem.setFoodDetail(foodDetail.get());
             newCartItem.setQuantity(cartRequest.getQuantity());
             newCartItem.setPrice(foodDetail.get().getPrice());
             newCartItem.setDescription(food.get().getDescription());
@@ -94,6 +95,7 @@ public class CartService implements ImplCartService {
         cartRepository.save(newCart);
 
         CartItems newCartItem = new CartItems();
+        newCartItem.setFoodDetail(foodDetail.get());
         newCartItem.setQuantity(cartRequest.getQuantity());
         newCartItem.setCart(newCart);
         newCartItem.setDescription(food.get().getDescription());

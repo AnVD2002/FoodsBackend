@@ -46,16 +46,15 @@ public class LoginService implements ImplLoginService{
             );
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             if (userDetails.getUser().isConfirmed()) {
-                if(userDetails.getUser().getRefreshToken()==null){
-                    String refreshToken = jwtProvider.generateRefreshToken(userDetails);
-                    userDetails.getUser().setRefreshToken(refreshToken);
-                    userRepository.save(userDetails.getUser());
-                }
-                String accessToken = refreshAccessToken(userDetails.getUser().getRefreshToken());
+                String refreshToken = jwtProvider.generateRefreshToken(userDetails);
+                userDetails.getUser().setRefreshToken(refreshToken);
+                userRepository.save(userDetails.getUser());
+                String accessToken = jwtProvider.generateToken(userDetails);
                 User user = UpdateToken(loginRequest.getUsername());
                 return new ResponseEntity<>(TokenResponse.builder()
                         .expiryToken(user.getUpdatePasswordToken())
                         .accessToken(accessToken)
+                        .refreshToken(refreshToken)
                         .role(userDetails.getAuthorities().toString())
                         .message("Đăng nhập thành công")
                         .build(), HttpStatus.OK);
@@ -68,10 +67,7 @@ public class LoginService implements ImplLoginService{
             return new ResponseEntity<>(TokenResponse.builder().message("Lỗi server: " + e.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    public boolean isLoggedIn(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication!=null && authentication.isAuthenticated();
-    }
+
     public User UpdateToken(String username){
         Optional<User> user = userRepository.FindByName(username);
         if(user.isPresent()){
@@ -81,13 +77,22 @@ public class LoginService implements ImplLoginService{
         }
         return null;
     }
-    public String refreshAccessToken(String refreshToken) {
+    @Override
+    public ResponseEntity<?> refreshAccessToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("Refresh token is required");
+        }
         try {
+            if (jwtProvider.isTokenExpired(refreshToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is expired");
+            }
+
             String userName = jwtProvider.ExtractUserName(refreshToken);
             CustomUserDetails userDetails = (CustomUserDetails) userService.loadUserByUsername(userName);
-            return jwtProvider.generateToken(userDetails);
+            String accessToken = jwtProvider.generateToken(userDetails);
+            return new ResponseEntity<>(accessToken, HttpStatus.OK);
         } catch (JwtException e) {
-            throw new RuntimeException("Invalid refresh token", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Invalid refresh token");
         }
     }
     public ResponseEntity<?> changePassword(ChangePasswordRequest request) {

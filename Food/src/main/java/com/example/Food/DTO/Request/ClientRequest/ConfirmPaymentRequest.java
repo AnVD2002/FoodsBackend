@@ -2,13 +2,12 @@ package com.example.Food.DTO.Request.ClientRequest;
 
 import lombok.*;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class TransactionalRequest {
-    private Long amountParam;
+public class ConfirmPaymentRequest {
     private Integer orderID;
+    private boolean isPaid;
 }

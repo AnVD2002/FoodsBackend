@@ -3,11 +3,12 @@ package com.example.Food.Service.Payment;
 import com.example.Food.Config.VNPayConfig;
 import com.example.Food.DTO.Request.ClientRequest.PaymentRequest;
 import com.example.Food.DTO.Request.ClientRequest.TransactionalRequest;
+import com.example.Food.DTO.Request.ClientRequest.VNPayRequest;
 import com.example.Food.DTO.Response.PaymentResponse;
 import com.example.Food.DTO.Response.VnPay_Response;
 import com.example.Food.Entity.Cart.CartItems;
 import com.example.Food.Entity.Cart.Carts;
-import com.example.Food.Entity.Food.FoodDetails;
+import com.example.Food.Entity.Order.OrderDetails;
 import com.example.Food.Entity.Order.Orders;
 import com.example.Food.Entity.Payment.Payment;
 import com.example.Food.Entity.Payment.PaymentMethod;
@@ -42,10 +43,11 @@ public class PaymentService implements ImplPaymentService {
     private CartItemsRepository cartItemsRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
     @Transactional
     public ResponseEntity<?> payment(PaymentRequest paymentRequest) {
-        Logger logger = LoggerFactory.getLogger(PaymentService.class);
 
         Optional<Orders> order = ordersRepository.findById(paymentRequest.getOrderID());
         if (order.isEmpty()) {
@@ -68,6 +70,20 @@ public class PaymentService implements ImplPaymentService {
             return new ResponseEntity<>("Không tồn tại cartItems", HttpStatus.NOT_FOUND);
         }
         List<Integer> integerList = cartItemsRepository.findCartItemByCartID(cart.getCartID());
+        if(integerList.isEmpty()) {
+            return new ResponseEntity<>("không tồn tại ", HttpStatus.NOT_FOUND);
+        }
+        List<OrderDetails> orderDetailsList = order.get().getOrderDetails();
+        if(orderDetailsList.isEmpty()) {
+            return new ResponseEntity<>("khong ton tai ", HttpStatus.NOT_FOUND);
+        }
+        List<OrderDetails> listOrderDetail = new ArrayList<>();
+        for(OrderDetails orderDetail : orderDetailsList) {
+            orderDetail.getFoodDetail().setOrdered(orderDetail.getQuantity()+ orderDetail.getFoodDetail().getOrdered());
+            orderDetail.getFoodDetail().setQuantity( orderDetail.getFoodDetail().getQuantity() - orderDetail.getQuantity());
+            listOrderDetail.add(orderDetail);
+        }
+        orderDetailsRepository.saveAll(listOrderDetail);
         paymentRepository.save(payment);
         orders.setStatus(true);
         ordersRepository.save(orders);
@@ -83,6 +99,67 @@ public class PaymentService implements ImplPaymentService {
                 .build();
         return new ResponseEntity<>(paymentResponse, HttpStatus.OK);
     }
+
+    @Transactional
+    public ResponseEntity<?> payVNPay(VNPayRequest vnpRequest) {
+        if (!"00".equals(vnpRequest.getCode())) {
+            return new ResponseEntity<>("Thanh toan that bai", HttpStatus.NOT_FOUND);
+        }
+        if (vnpRequest.getOrderID() == null) {
+            return new ResponseEntity<>("not exist orderID", HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Orders> order = ordersRepository.findById(vnpRequest.getOrderID());
+        if (order.isEmpty()) {
+            return new ResponseEntity<>("not exist order", HttpStatus.NOT_FOUND);
+        }
+
+        Orders orders = order.get();
+        User user = orders.getUser();
+        Carts cart = user.getCart();
+
+        List<CartItems> cartItems = cart.getCartItems();
+        if (cartItems.isEmpty()) {
+            return new ResponseEntity<>("not exist cartItem", HttpStatus.NOT_FOUND);
+        }
+
+        List<OrderDetails> orderDetailsList = orders.getOrderDetails();
+        if (orderDetailsList.isEmpty()) {
+            return new ResponseEntity<>("not exist orderDetails", HttpStatus.NOT_FOUND);
+        }
+        List<OrderDetails> listOrderDetail = new ArrayList<>();
+        for (OrderDetails orderDetail : orderDetailsList) {
+            orderDetail.getFoodDetail().setOrdered(orderDetail.getQuantity() + orderDetail.getFoodDetail().getOrdered());
+            orderDetail.getFoodDetail().setQuantity(orderDetail.getFoodDetail().getQuantity() - orderDetail.getQuantity());
+            listOrderDetail.add(orderDetail);
+        }
+        orderDetailsRepository.saveAll(listOrderDetail);
+
+        orders.setStatus(true);
+        ordersRepository.save(orders);
+
+        cartItemsRepository.deleteBatch(cartItems);
+
+        cart.setTotal(0.0);
+        cartRepository.save(cart);
+
+        Optional<PaymentMethod> paymentMT = paymentMethodRepository.findById(1);
+        if (paymentMT.isEmpty()) {
+            return new ResponseEntity<>("not exist paymentMethod", HttpStatus.NOT_FOUND);
+        }
+
+        Payment payment = new Payment();
+        payment.setOrder(orders);
+        payment.setPaymentMethod(paymentMT.get());
+        payment.setStatus(true);
+        payment.setPaymentDate(LocalDate.now());
+        paymentRepository.save(payment);
+
+        return new ResponseEntity<>("Thanh toan thanh cong", HttpStatus.OK);
+    }
+
+
+
     @Override
     public VnPay_Response apiVNPay(HttpServletRequest request, TransactionalRequest transactionRequest) {
         String vnp_Version = "2.1.0";
@@ -100,8 +177,9 @@ public class PaymentService implements ImplPaymentService {
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thông tin đặt hàng");
+        vnp_Params.put("vnp_OrderInfo", transactionRequest.getOrderID().toString());
         vnp_Params.put("vnp_OrderType", "Chuyển khoản");
+
 
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
@@ -145,6 +223,34 @@ public class PaymentService implements ImplPaymentService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         return VnPay_Response.builder().url( VNPayConfig.vnp_PayUrl + "?" + queryUrl).build();
     }
+    
+    @Override
+    public ResponseEntity<?> getToTalInThisMonth() {
+        Double total = paymentRepository.findTotalForCurrentMonth();
+        if(total == null) {
+            return new ResponseEntity<>("Tháng này kh có đơn hàng nào",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(total, HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<?> getQuantityThisMonth(){
+        List<Orders> orders = paymentRepository.findOrderForCurrentMonth();
+        if(orders.isEmpty()) {
+            return new ResponseEntity<>("not exist", HttpStatus.NOT_FOUND);
+        }
+        int totalQuantity = 0;
+        for (Orders order : orders) {
+            List<OrderDetails> orderDetailsList = order.getOrderDetails();
+            totalQuantity += orderDetailsList.stream()
+                    .mapToInt(OrderDetails::getQuantity)
+                    .sum();
+        }
+        return new ResponseEntity<>(totalQuantity, HttpStatus.OK);
+    }
+
+
+
+
 
 
 }

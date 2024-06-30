@@ -37,17 +37,30 @@ public class AccountController {
     public ResponseEntity<?> Login(@RequestBody LoginRequest request ){
         return ResponseEntity.ok(loginService.Login(request));
     }
+    @CrossOrigin
+    @PostMapping(path = "refreshToken")
+    public ResponseEntity<?> RefreshToken(@RequestParam String refreshToken){
+        return ResponseEntity.ok(loginService.refreshAccessToken(refreshToken));
+    }
+    @CrossOrigin
     @GetMapping("getProfile")
     public ResponseEntity<?> getProfileUser(@RequestParam String name){
         return ResponseEntity.ok(userCustomService.getUserByName(name));
     }
+    @CrossOrigin
     @PutMapping("updateProfile")
     public ResponseEntity<?> updateProfileUser(@RequestBody UpdateProfileRequest request){
         return ResponseEntity.ok(userCustomService.updateProfileUser(request));
     }
+    @CrossOrigin
     @PutMapping("changePassword")
     public ResponseEntity<?> changePasswordUser(@RequestBody ChangePasswordRequest request){
         return ResponseEntity.ok(userCustomService.changePassword(request));
+    }
+    @CrossOrigin
+    @GetMapping("getUserID")
+    public ResponseEntity<?> getUserID(@RequestParam String username){
+        return ResponseEntity.ok(userCustomService.getUserID(username));
     }
 
 

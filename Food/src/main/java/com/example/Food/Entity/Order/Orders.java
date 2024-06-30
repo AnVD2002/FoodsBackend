@@ -45,4 +45,8 @@ public class Orders {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("order-payment")
     private Payment payment;
+
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "order")
+    @JsonManagedReference("order-orderDetails")
+    private List<OrderDetails> orderDetails;
 }

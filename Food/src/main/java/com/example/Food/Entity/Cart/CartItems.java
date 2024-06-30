@@ -1,6 +1,8 @@
 package com.example.Food.Entity.Cart;
 
+import com.example.Food.Entity.Food.FoodDetails;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +20,7 @@ public class CartItems {
     private Integer cartItemID;
     @Column(name = "cart_id" , insertable = false, updatable = false)
     private Integer cartID;
-    @Column(name = "food_detail_id")
+    @Column(name = "food_detail_id", insertable = false, updatable = false)
     private Integer foodDetailID;
     @Column(name = "food_detail_name")
     private String foodDetailName;
@@ -35,5 +37,10 @@ public class CartItems {
     @JsonBackReference("cart-cartItems")
     @JoinColumn(name = "cart_id")
     private Carts cart;
+
+    @OneToOne()
+    @JsonBackReference("foodDetail-cartItem")
+    @JoinColumn(name = "food_detail_id")
+    private FoodDetails foodDetail;
 
 }

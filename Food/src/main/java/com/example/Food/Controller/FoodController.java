@@ -4,9 +4,14 @@ import com.example.Food.DTO.Request.ClientRequest.*;
 import com.example.Food.DTO.Request.User.CommentRequest;
 import com.example.Food.DTO.Request.User.RepCommentRequest;
 import com.example.Food.Entity.Food.Foods;
+import com.example.Food.Entity.Food.Properties;
 import com.example.Food.Repository.FoodsRepository;
+import com.example.Food.Repository.OrderDetailsRepository;
 import com.example.Food.Service.Comment.CommentService;
 import com.example.Food.Service.Foods.FoodsService;
+import com.example.Food.Service.Foods.PropertiesCRUD.PropertiesService;
+import com.example.Food.Service.Foods.PropertyDetailCRUD.PropertyDetailService;
+import com.example.Food.Service.Order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,21 +29,15 @@ public class FoodController {
     private CommentService commentService;
     @Autowired
     private FoodsRepository foodsRepository;
+    @Autowired
+    private PropertyDetailService propertyDetailService;
+    @Autowired
+    private PropertiesService propertiesService;
 
     @CrossOrigin
     @PostMapping(path = "createFoodProperty",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> CreateFoodProperty(@RequestBody FoodRequest request){
         return ResponseEntity.ok(foodsService.CreateFoodWithProperties(request));
-    }
-    @CrossOrigin
-    @PostMapping(path = "createFoodPropertyDetails",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> CreateFoodPropertyDetails(@RequestBody FoodPropertyDetailsRequest request){
-        return ResponseEntity.ok(foodsService.createFoodWithPropertiesDetails(request));
-    }
-    @CrossOrigin
-    @DeleteMapping(path = "deleteFood")
-    public ResponseEntity<?> DeleteFood(@RequestParam Integer  foodID){
-        return ResponseEntity.ok(foodsService.deleteFood(foodID));
     }
     @CrossOrigin
     @PutMapping(path = "updateFood", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -50,11 +49,7 @@ public class FoodController {
     public ResponseEntity<?> allFood(){
         return ResponseEntity.ok(foodsService.getAllFoods());
     }
-    @CrossOrigin
-    @GetMapping(path = "allFoodCategories")
-    public ResponseEntity<?> allFoodCategories(){
-        return ResponseEntity.ok(foodsService.getAllFoodCategories());
-    }
+
     @CrossOrigin
     @GetMapping(path = "allPropertyDetail")
     public ResponseEntity<?> allPropertyDetail(){
@@ -110,11 +105,6 @@ public class FoodController {
         return ResponseEntity.ok(commentService.findRatingByFoodID(foodID));
     }
     @CrossOrigin
-    @PostMapping(path = "foodFilter")
-    public ResponseEntity<?> foodFilter(@RequestBody FoodFilterRequest foodFilterRequest){
-        return ResponseEntity.ok(foodsService.getFoodDetailsFilter(foodFilterRequest));
-    }
-    @CrossOrigin
     @PostMapping(path = "foodFilterClient")
     public ResponseEntity<?> foodFilterClient(@RequestBody FoodDetailClientRequest foodDetailClientRequest){
         return ResponseEntity.ok(foodsService.getFoodDetailsFilterClient(foodDetailClientRequest));
@@ -125,14 +115,22 @@ public class FoodController {
         return ResponseEntity.ok(foodsService.getFoodDetailByID(foodID));
     }
     @CrossOrigin
-    @PutMapping(path = "updateFoodDetail")
-    private ResponseEntity<?> updateFoodDetail(@RequestBody UpdateFoodDetailRequest request){
-        return ResponseEntity.ok(foodsService.updateFoodDetail(request));
+    @GetMapping(path = "getTopOrder")
+    public ResponseEntity<?> getTopOrder(){
+        return ResponseEntity.ok(foodsService.getTopOrder());
     }
     @CrossOrigin
-    @DeleteMapping(path = "deleteFoodDetail")
-    private ResponseEntity<?> deleteFoodDetail(@RequestParam Integer foodDetailID){
-        return ResponseEntity.ok(foodsService.deleteFoodDetail(foodDetailID));
+    @GetMapping(path = "allFoodCategories")
+    public ResponseEntity<?> allFoodCategories(){
+        return ResponseEntity.ok(foodsService.getAllFoodCategories());
     }
+
+    @CrossOrigin
+    @GetMapping(path = "testGetFoodDetail")
+    public ResponseEntity<?> test(@RequestBody FoodDetailRequest foodDetailRequest){
+        return ResponseEntity.ok(foodsService.foodDetail(foodDetailRequest));
+    }
+
+
 
 }

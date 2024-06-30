@@ -5,6 +5,7 @@ import com.example.Food.DTO.Response.*;
 import com.example.Food.DTO.Response.User.FoodDetailDTOa;
 import com.example.Food.Entity.Food.*;
 import com.example.Food.Entity.Food.Properties;
+import com.example.Food.Entity.Order.OrderDetails;
 import com.example.Food.Repository.*;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,8 @@ public class FoodsService implements ImplFoodsService{
     private FoodCategoriesRepository foodCategoriesRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
     @Transactional
     @Override
@@ -54,6 +57,9 @@ public class FoodsService implements ImplFoodsService{
         if(foodRequest.getPropertyID().isEmpty()){
             return new ResponseEntity<>("Property cannot be empty", HttpStatus.BAD_REQUEST);
         }
+        if (foodRequest.getDescription().isEmpty()){
+            return new ResponseEntity<>("Description cannot be empty", HttpStatus.BAD_REQUEST);
+        }
         Optional<FoodCategories> foodCategory = foodCategoriesRepository.findById(foodRequest.getFoodCategoryID());
         List<String> propertyNameList = new ArrayList<>();
         if(foodCategory.isPresent()){
@@ -61,6 +67,7 @@ public class FoodsService implements ImplFoodsService{
             food.setFoodName(foodRequest.getFoodName());
             food.setFoodCategory(foodCategory.get());
             food.setImage(foodRequest.getImg());
+            food.setDescription(foodRequest.getDescription());
             food=foodsRepository.save(food);
             List<FoodProperties> listFoodProperties = new ArrayList<>();
             for(int i=0 ; i<foodRequest.getPropertyID().size();i++){
@@ -116,6 +123,7 @@ public class FoodsService implements ImplFoodsService{
             newFoodDetail.setPrice(request.getPrice());
             newFoodDetail.setQuantity(request.getQuantity());
             newFoodDetail.setFoodDetailName(foodPropertyName);
+            newFoodDetail.setOrdered(0);
 
             for (Integer propertyDetailID : request.getPropertyDetailID()) {
                 Optional<PropertyDetails> propertyDetailOpt = propertyDetailsRepository.findById(propertyDetailID);
@@ -204,6 +212,30 @@ public class FoodsService implements ImplFoodsService{
         }
         return allFoodDTOs;
     }
+    @Override
+    public ResponseEntity<?> getTopOrder() {
+        List<Foods> foods = foodsRepository.findAll();
+        if (foods.isEmpty()) {
+            return new ResponseEntity<>("not exist food", HttpStatus.NOT_FOUND);
+        }
+
+        List<AllFoodDTO> allFoodDTOs = getAllFoodDTOS(foods);
+        if (allFoodDTOs.isEmpty()) {
+            return new ResponseEntity<>("not exist food", HttpStatus.NOT_FOUND);
+        }
+        List<AllFoodDTO> topOrderedFoods = allFoodDTOs.stream()
+                .sorted(Comparator.comparingInt(this::getTotalOrderedForFood).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(topOrderedFoods, HttpStatus.OK);
+    }
+
+    private int getTotalOrderedForFood(AllFoodDTO foodDTO) {
+        return foodDTO.getFoodDetails().stream()
+                .mapToInt(FoodDetailDTO::getOrdered)
+                .sum();
+    }
 
     private Double getRatingForFood(Integer foodID) {
         Double rating = commentRepository.findAverageRatingByFoodID(foodID);
@@ -236,6 +268,16 @@ public class FoodsService implements ImplFoodsService{
     public List<FoodCategories> getAllFoodCategories() {
         return foodCategoriesRepository.findAll();
     }
+    @Override
+    public ResponseEntity<?> getAllCategory(){
+        List<FoodCategories> Categories = foodCategoriesRepository.findAll();
+        List<CategoryResponse> categoryResponses =
+                Categories.stream().map(category-> new CategoryResponse(category.getFoodCategoryID(), category.getFoodCategoryName())).toList();
+        return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
+    }
+
+
+
 
     @Override
     public List<PropertyDetails> allPropertyDetails() {
@@ -243,8 +285,14 @@ public class FoodsService implements ImplFoodsService{
     }
 
     @Override
-    public List<PropertyDetails> getPropertyDetailByFoodID(Integer foodID) {
-        return propertyDetailsRepository.getPropertyDetailsByFoodId(foodID);
+    public ResponseEntity<?> getPropertyDetailByFoodID(Integer foodID) {
+        List<PropertyDetails> propertyDetails = propertyDetailsRepository.getPropertyDetailsByFoodId(foodID);
+        List<PropertyDetailClientResponse> responses = propertyDetails
+                .stream().map(propertyDetail-> new PropertyDetailClientResponse(propertyDetail.getPropertyDetailID(),
+                        propertyDetail.getPropertyDetailName(),
+                        propertyDetail.getProperty().getPropertyID(),
+                        propertyDetail.getProperty().getPropertyName())).toList();
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @Override
@@ -420,8 +468,60 @@ public class FoodsService implements ImplFoodsService{
             return new ResponseEntity<>("not exist foodDetailID", HttpStatus.BAD_REQUEST);
         }
         foodDetailsPropertyDetailsRepository.findFoodDetailID(foodDetailID);
+        List<OrderDetails> orderDetails = foodDetail.get().getOrderDetails();
+        if(!orderDetails.isEmpty()){
+            orderDetailsRepository.deleteAll(orderDetails);
+        }
         foodDetailsRepository.delete(foodDetail.get());
         return new ResponseEntity<>("deleted", HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<?> getAllProperties() {
+        List<Properties> foodProperties = propertiesRepository.findAll();
+        if(foodProperties.isEmpty()){
+            return new ResponseEntity<>("not exist foodProperties", HttpStatus.BAD_REQUEST);
+        }
+        List<FoodPropertiesResponse> responses = foodProperties
+                .stream().map(property->new FoodPropertiesResponse(property.getPropertyID(), property.getPropertyName())).toList();
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> foodDetail(FoodDetailRequest request){
+        if(request.getFoodID()==null){
+            return new ResponseEntity<>("not exist foodID", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getPropertyDetails().isEmpty()){
+            return new ResponseEntity<>("not exist propertyDetails", HttpStatus.BAD_REQUEST);
+        }
+        Optional<FoodDetails> foodDetail = foodDetailsPropertyDetailsRepository.findFoodDetailByFoodIDAndPropertyDetailIDs(request.getFoodID(),request.getPropertyDetails(),request.getPropertyDetails().size());
+        return new ResponseEntity<>(foodDetail.isPresent() ? foodDetail.get().getFoodDetailName() : "", HttpStatus.OK);
+
+    }
+    @Override
+    public ResponseEntity<?> updateFood(UpdateFoods request){
+        if(request.getFoodID()==null){
+            return new ResponseEntity<>("not exist foodID", HttpStatus.BAD_REQUEST);
+        }
+        if (request.getFoodDescription().isEmpty()){
+            return new ResponseEntity<>("not exist foodDescription", HttpStatus.BAD_REQUEST);
+        }
+        if (request.getFoodName().isEmpty()){
+            return new ResponseEntity<>("not exist foodName", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getFoodImage().isEmpty()){
+            return new ResponseEntity<>("not exist foodImage", HttpStatus.BAD_REQUEST);
+        }
+        Optional<Foods> foodsOtp = foodsRepository.findById(request.getFoodID());
+        if(foodsOtp.isEmpty()){
+            return new ResponseEntity<>("not exist foodID", HttpStatus.BAD_REQUEST);
+        }
+        Foods food = foodsOtp.get();
+        food.setFoodName(request.getFoodName());
+        food.setImage(request.getFoodImage());
+        food.setDescription(request.getFoodDescription());
+        foodsRepository.save(food);
+        return new ResponseEntity<>("updated", HttpStatus.OK);
+    }
 }

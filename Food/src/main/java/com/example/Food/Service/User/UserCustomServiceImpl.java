@@ -13,4 +13,6 @@ public interface UserCustomServiceImpl {
     public ResponseEntity<?> createUser();
     public ResponseEntity<?> updateUser(UpdateUserRequest updateUserRequest);
     public ResponseEntity<?> deleteUser(Integer id);
+    public ResponseEntity<?> getUserID(String username);
+    public ResponseEntity<?> getTotalUser();
 }
