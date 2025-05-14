@@ -2,7 +2,7 @@ package com.example.Food.Config;
 
 import com.example.Food.Enum.RoleEnum;
 import com.example.Food.JWT.JwtAuthenticationFilter;
-import com.example.Food.Service.User.UserService;
+import com.example.Food.Service.User.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,8 +49,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public UserService userService(){
-        return new UserService();
+    public UserServiceImpl userService(){
+        return new UserServiceImpl();
     }
 
     @Bean

@@ -4,27 +4,22 @@ import com.example.Food.DTO.Request.ClientRequest.PaymentRequest;
 import com.example.Food.DTO.Request.ClientRequest.TransactionalRequest;
 import com.example.Food.DTO.Request.ClientRequest.VNPayRequest;
 import com.example.Food.DTO.Response.VnPay_Response;
-import com.example.Food.Entity.Order.Orders;
 import com.example.Food.Repository.OrderDetailsRepository;
 import com.example.Food.Repository.OrdersRepository;
-import com.example.Food.Service.Order.OrderService;
-import com.example.Food.Service.Payment.PaymentService;
+import com.example.Food.Service.Order.OrderServiceImpl;
+import com.example.Food.Service.Payment.PaymentServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/payment/")
 public class PaymentController {
     @Autowired
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
     @Autowired
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
     @Autowired

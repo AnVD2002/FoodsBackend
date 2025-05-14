@@ -1,7 +1,7 @@
 package com.example.Food.JWT;
 
 import com.example.Food.Entity.User.CustomUserDetails;
-import com.example.Food.Service.User.UserService;
+import com.example.Food.Service.User.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtProvider jwtProvider;
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Override
     protected void doFilterInternal(

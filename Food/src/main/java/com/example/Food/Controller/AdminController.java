@@ -4,45 +4,42 @@ import com.example.Food.DTO.Request.Admin.UpdateUserRequest;
 import com.example.Food.DTO.Request.ClientRequest.*;
 import com.example.Food.Repository.FoodsRepository;
 import com.example.Food.Repository.PaymentRepository;
-import com.example.Food.Service.Comment.CommentService;
-import com.example.Food.Service.Foods.FoodsService;
-import com.example.Food.Service.Foods.PropertiesCRUD.PropertiesService;
-import com.example.Food.Service.Foods.PropertyDetailCRUD.PropertyDetailService;
-import com.example.Food.Service.Order.OrderService;
-import com.example.Food.Service.Payment.PaymentService;
-import com.example.Food.Service.User.UserCustomService;
-import com.example.Food.Service.User.UserService;
+import com.example.Food.Service.Comment.CommentServiceImpl;
+import com.example.Food.Service.Foods.FoodsServiceImpl;
+import com.example.Food.Service.Foods.PropertiesCRUD.PropertiesServiceImpl;
+import com.example.Food.Service.Foods.PropertyDetailCRUD.PropertyDetailServiceImpl;
+import com.example.Food.Service.Order.OrderServiceImpl;
+import com.example.Food.Service.Payment.PaymentServiceImpl;
+import com.example.Food.Service.User.UserCustomServiceImpl;
+import com.example.Food.Service.User.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Properties;
 
 @RequestMapping("/api/v1/admin/")
 @RestController
 public class AdminController {
     @Autowired
-    private FoodsService foodsService;
+    private FoodsServiceImpl foodsService;
     @Autowired
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
     @Autowired
     private FoodsRepository foodsRepository;
     @Autowired
-    private UserCustomService userCustomService;
+    private UserCustomServiceImpl userCustomService;
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     @Autowired
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
     @Autowired
-    private PropertiesService propertiesService;
+    private PropertiesServiceImpl propertiesService;
     @Autowired
-    private PropertyDetailService propertyDetailService;
+    private PropertyDetailServiceImpl propertyDetailService;
     @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
 
     @CrossOrigin
     @GetMapping(path = "foodDetailByID")

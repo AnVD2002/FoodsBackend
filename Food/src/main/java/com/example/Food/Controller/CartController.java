@@ -2,7 +2,7 @@ package com.example.Food.Controller;
 
 import com.example.Food.DTO.Request.ClientRequest.CartRequest;
 import com.example.Food.DTO.Request.ClientRequest.UpdateCartItemRequest;
-import com.example.Food.Service.Carts.CartService;
+import com.example.Food.Service.Carts.CartServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CartController {
     @Autowired
-    private CartService cartService;
+    private CartServiceImpl cartService;
     @CrossOrigin
     @PostMapping(path = "addToCart",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addToCart(@RequestBody CartRequest cartRequest){

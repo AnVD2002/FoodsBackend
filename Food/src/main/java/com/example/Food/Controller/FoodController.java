@@ -4,14 +4,11 @@ import com.example.Food.DTO.Request.ClientRequest.*;
 import com.example.Food.DTO.Request.User.CommentRequest;
 import com.example.Food.DTO.Request.User.RepCommentRequest;
 import com.example.Food.Entity.Food.Foods;
-import com.example.Food.Entity.Food.Properties;
 import com.example.Food.Repository.FoodsRepository;
-import com.example.Food.Repository.OrderDetailsRepository;
-import com.example.Food.Service.Comment.CommentService;
-import com.example.Food.Service.Foods.FoodsService;
-import com.example.Food.Service.Foods.PropertiesCRUD.PropertiesService;
-import com.example.Food.Service.Foods.PropertyDetailCRUD.PropertyDetailService;
-import com.example.Food.Service.Order.OrderService;
+import com.example.Food.Service.Comment.CommentServiceImpl;
+import com.example.Food.Service.Foods.FoodsServiceImpl;
+import com.example.Food.Service.Foods.PropertiesCRUD.PropertiesServiceImpl;
+import com.example.Food.Service.Foods.PropertyDetailCRUD.PropertyDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,15 +21,15 @@ import java.util.Optional;
 @RestController
 public class FoodController {
     @Autowired
-    private FoodsService foodsService;
+    private FoodsServiceImpl foodsService;
     @Autowired
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
     @Autowired
     private FoodsRepository foodsRepository;
     @Autowired
-    private PropertyDetailService propertyDetailService;
+    private PropertyDetailServiceImpl propertyDetailService;
     @Autowired
-    private PropertiesService propertiesService;
+    private PropertiesServiceImpl propertiesService;
 
     @CrossOrigin
     @PostMapping(path = "createFoodProperty",consumes = MediaType.APPLICATION_JSON_VALUE)

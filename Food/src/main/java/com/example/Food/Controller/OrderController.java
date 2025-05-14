@@ -1,10 +1,9 @@
 package com.example.Food.Controller;
 
 import com.example.Food.DTO.Request.ClientRequest.CancelRequest;
-import com.example.Food.DTO.Request.ClientRequest.ConfirmPaymentRequest;
 import com.example.Food.DTO.Request.ClientRequest.OrderRequest;
 import com.example.Food.Repository.OrderDetailsRepository;
-import com.example.Food.Service.Order.OrderService;
+import com.example.Food.Service.Order.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OrderController {
     @Autowired
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
 
